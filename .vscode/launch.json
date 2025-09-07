@@ -18,6 +18,19 @@
                 "--dsn", "mongodb://mongo:admin@localhost:4041/gomicroservicesdemolocal?authSource=admin&connect=direct",
                 "--jsecret", "X8mJc1Vb7K"
             ]
+        },
+        {
+            "name": "Launch Health API",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceRoot}/health-api/cmd",
+            "cwd": "${workspaceRoot}/health-api",
+            "args": [
+                "--ver", "debug",
+                "--env", "local",
+                "--hport", "8080"
+            ]
         }
     ]
 }

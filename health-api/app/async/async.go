@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/sergicanet9/go-microservices-demo/task-manager-api/app/async/healthchecker"
-	"github.com/sergicanet9/go-microservices-demo/task-manager-api/config"
+	"github.com/sergicanet9/go-microservices-demo/health-api/app/async/healthchecker"
+	"github.com/sergicanet9/go-microservices-demo/health-api/config"
 	"github.com/sergicanet9/scv-go-tools/v4/observability"
 )
 
@@ -21,7 +21,7 @@ func New(cfg config.Config) async {
 
 func (a async) Run(ctx context.Context, cancel context.CancelFunc) func() error {
 	return func() error {
-		go healthchecker.RunHTTP(ctx, cancel, fmt.Sprintf("http://:%d/task-manager-api/v1/health", a.config.HTTPPort), a.config.Async.Interval.Duration)
+		go healthchecker.RunHTTP(ctx, cancel, fmt.Sprintf("http://:%d/health-api/v1/health", a.config.HTTPPort), a.config.Async.Interval.Duration)
 
 		<-ctx.Done()
 		observability.Logger().Printf("Async process stopped")

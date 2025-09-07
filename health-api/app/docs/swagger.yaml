@@ -1,7 +1,7 @@
-basePath: /task-manager-api/v1
+basePath: /health-api/v1
 info:
   contact: {}
-  title: Task Manager API
+  title: Health API
   version: v1
 paths:
   /health:
@@ -14,9 +14,4 @@ paths:
       summary: Health check
       tags:
       - Health
-securityDefinitions:
-  Bearer:
-    in: header
-    name: Authorization
-    type: apiKey
 swagger: "2.0"

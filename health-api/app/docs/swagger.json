@@ -1,11 +1,11 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "Task Manager API",
+        "title": "Health API",
         "contact": {},
         "version": "v1"
     },
-    "basePath": "/task-manager-api/v1",
+    "basePath": "/health-api/v1",
     "paths": {
         "/health": {
             "get": {
@@ -20,13 +20,6 @@
                     }
                 }
             }
-        }
-    },
-    "securityDefinitions": {
-        "Bearer": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
         }
     }
 }

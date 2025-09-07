@@ -6,19 +6,15 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/sergicanet9/go-microservices-demo/task-manager-api/app/handlers"
-	"github.com/sergicanet9/go-microservices-demo/task-manager-api/config"
+	"github.com/sergicanet9/go-microservices-demo/health-api/app/handlers"
+	"github.com/sergicanet9/go-microservices-demo/health-api/config"
+	"github.com/sergicanet9/scv-go-tools/v3/observability"
 	"github.com/sergicanet9/scv-go-tools/v4/api/middlewares"
-	"github.com/sergicanet9/scv-go-tools/v4/observability"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type api struct {
-	config   config.Config
-	services svs
-}
-
-type svs struct {
+	config config.Config
 }
 
 // New creates a new API
@@ -35,7 +31,7 @@ func (a *api) RunHTTP(ctx context.Context, cancel context.CancelFunc) func() err
 		router.Use(middlewares.Logger("/swagger", "/docs.swagger.json", "/grpcui"))
 		router.Use(middlewares.Recover)
 
-		v1Router := router.PathPrefix("/task-manager-api/v1").Subrouter()
+		v1Router := router.PathPrefix("/health-api/v1").Subrouter()
 
 		healthHandler := handlers.NewHealthHandler(ctx, a.config)
 		handlers.SetHealthRoutes(v1Router, healthHandler)

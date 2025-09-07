@@ -62,6 +62,22 @@ services:
       - mongodb
     ports:
       - $TASK_MANAGER_API_HOST_HTTP_PORT:$TASK_MANAGER_API_CONTAINER_HTTP_PORT
+  health-api:
+    image: health-api:$VERSION
+    container_name: health-api-$ENV
+    build:
+      args:
+        version: $VERSION
+      context: ./health-api
+      dockerfile: build/docker/Dockerfile
+    environment:
+      - env=$ENV
+      - hp=$TASK_MANAGER_API_CONTAINER_HTTP_PORT
+    depends_on:
+      - task-manager-api
+      - user-management-api
+    ports:
+      - $HEALTH_API_HOST_HTTP_PORT:$HEALTH_API_CONTAINER_HTTP_PORT
   nginx:
     image: nginx:latest
     ports:

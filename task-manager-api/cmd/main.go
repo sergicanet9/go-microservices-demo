@@ -16,9 +16,9 @@ import (
 
 // @title Task Manager API
 // @version v1
+// @BasePath /task-manager-api/v1
 // @tag.description Powered by scv-go-tools
 // @tag.docs.url https://github.com/sergicanet9/scv-go-tools
-
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization

@@ -29,13 +29,6 @@ const docTemplate = `{
                 }
             }
         }
-    },
-    "securityDefinitions": {
-        "Bearer": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
-        }
     }
 }`
 
@@ -43,9 +36,9 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "v1",
 	Host:             "",
-	BasePath:         "/task-manager-api/v1",
+	BasePath:         "/health-api/v1",
 	Schemes:          []string{},
-	Title:            "Task Manager API",
+	Title:            "Health API",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
