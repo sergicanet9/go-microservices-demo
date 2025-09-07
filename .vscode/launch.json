@@ -15,7 +15,7 @@
                 "--ver", "debug",
                 "--env", "local",
                 "--hport", "8080",
-                "--urls", "http://localhost:8082/task-manager-api/v1/health,http://localhost:8083/v1/health"
+                "--urls", "http://localhost:8083/task-manager-api/v1/health,http://localhost:8084/v1/health"
             ]
         },
                 {

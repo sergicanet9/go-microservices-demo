@@ -1,4 +1,62 @@
 services:
+  nginx:
+      image: nginx:latest
+      ports:
+        - $NGINX_HOST_PORT:$NGINX_CONTAINER_PORT
+      depends_on:
+        - user-management-api
+      volumes:
+        - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+  health-api:
+    image: health-api:$VERSION
+    container_name: health-api-$ENV
+    build:
+      args:
+        version: $VERSION
+      context: ./health-api
+      dockerfile: build/docker/Dockerfile
+    environment:
+      - env=$ENV
+      - hp=$TASK_MANAGER_API_CONTAINER_HTTP_PORT
+      - urls=$HEALTH_URL_TASK_MANAGER_API,$HEALTH_URL_USER_MANAGEMENT_API
+    depends_on:
+      - task-manager-api
+      - user-management-api
+    ports:
+      - $HEALTH_API_HOST_HTTP_PORT:$HEALTH_API_CONTAINER_HTTP_PORT
+  task-manager-api:
+    image: task-manager-api:$VERSION
+    container_name: task-manager-api-$ENV
+    build:
+      args:
+        version: $VERSION
+      context: ./task-manager-api
+      dockerfile: build/docker/Dockerfile
+    environment:
+      - env=$ENV
+      - hp=$TASK_MANAGER_API_CONTAINER_HTTP_PORT
+      - dsn=$MONGO_DSN
+      - jsecret=$JWT_SECRET
+    depends_on:
+      - mongodb
+    ports:
+      - $TASK_MANAGER_API_HOST_HTTP_PORT:$TASK_MANAGER_API_CONTAINER_HTTP_PORT
+  user-management-api:
+    image: ghcr.io/sergicanet9/go-hexagonal-api/go-hexagonal-api:latest
+    platform: linux/amd64
+    container_name: user-management-api-$ENV
+    environment:
+      - env=$ENV
+      - hp=$USER_MANAGEMENT_API_CONTAINER_HTTP_PORT
+      - gp=$USER_MANAGEMENT_API_CONTAINER_GRPC_PORT
+      - db=mongo
+      - dsn=$MONGO_DSN
+      - jsecret=$JWT_SECRET
+    depends_on:
+      - mongodb
+    ports:
+      - $USER_MANAGEMENT_API_HOST_HTTP_PORT:$USER_MANAGEMENT_API_CONTAINER_HTTP_PORT
+      - $USER_MANAGEMENT_API_HOST_GRPC_PORT:$USER_MANAGEMENT_API_CONTAINER_GRPC_PORT
   mongodb:
       image: mongo
       container_name: mongodb
@@ -29,61 +87,5 @@ services:
       - mongodb
     ports:
       - $MONGO_EXPRESS_HOST_PORT:$MONGO_EXPRESS_CONTAINER_PORT
-  user-management-api:
-    image: ghcr.io/sergicanet9/go-hexagonal-api/go-hexagonal-api:latest
-    platform: linux/amd64
-    container_name: user-management-api-$ENV
-    environment:
-      - env=$ENV
-      - hp=$USER_MANAGEMENT_API_CONTAINER_HTTP_PORT
-      - gp=$USER_MANAGEMENT_API_CONTAINER_GRPC_PORT
-      - db=mongo
-      - dsn=$MONGO_DSN
-      - jsecret=$JWT_SECRET
-    depends_on:
-      - mongodb
-    ports:
-      - $USER_MANAGEMENT_API_HOST_HTTP_PORT:$USER_MANAGEMENT_API_CONTAINER_HTTP_PORT
-      - $USER_MANAGEMENT_API_HOST_GRPC_PORT:$USER_MANAGEMENT_API_CONTAINER_GRPC_PORT
-  task-manager-api:
-    image: task-manager-api:$VERSION
-    container_name: task-manager-api-$ENV
-    build:
-      args:
-        version: $VERSION
-      context: ./task-manager-api
-      dockerfile: build/docker/Dockerfile
-    environment:
-      - env=$ENV
-      - hp=$TASK_MANAGER_API_CONTAINER_HTTP_PORT
-      - dsn=$MONGO_DSN
-      - jsecret=$JWT_SECRET
-    depends_on:
-      - mongodb
-    ports:
-      - $TASK_MANAGER_API_HOST_HTTP_PORT:$TASK_MANAGER_API_CONTAINER_HTTP_PORT
-  health-api:
-    image: health-api:$VERSION
-    container_name: health-api-$ENV
-    build:
-      args:
-        version: $VERSION
-      context: ./health-api
-      dockerfile: build/docker/Dockerfile
-    environment:
-      - env=$ENV
-      - hp=$TASK_MANAGER_API_CONTAINER_HTTP_PORT
-      - urls=$HEALTH_URL_TASK_MANAGER_API,$HEALTH_URL_USER_MANAGEMENT_API
-    depends_on:
-      - task-manager-api
-      - user-management-api
-    ports:
-      - $HEALTH_API_HOST_HTTP_PORT:$HEALTH_API_CONTAINER_HTTP_PORT
-  nginx:
-    image: nginx:latest
-    ports:
-      - $NGINX_HOST_PORT:$NGINX_CONTAINER_PORT
-    depends_on:
-      - user-management-api
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+
+
