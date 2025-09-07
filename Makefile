@@ -21,7 +21,6 @@ up:
 	@echo ""
 	@echo "📋 Health API"
 	@echo "    👉 Swagger UI:	"
-	@echo "    👉 gRPC UI:		"
 	@echo "    🔧 Command examples:"
 	@echo "        curl "
 	@echo ""
