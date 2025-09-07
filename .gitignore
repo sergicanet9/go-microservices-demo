@@ -12,6 +12,9 @@ __debug_bin
 # Output of the go coverage tool
 *.out
 
+# Keyfiles
+*.keyfile
+
 #DS_Store
 *.DS_Store
 

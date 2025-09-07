@@ -1,0 +1,21 @@
+info:
+  contact: {}
+  title: Task Manager API
+  version: v1
+paths:
+  /health:
+    get:
+      description: Returns basic runtime information of the API when the service is
+        up
+      responses:
+        "200":
+          description: OK
+      summary: Health check
+      tags:
+      - Health
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

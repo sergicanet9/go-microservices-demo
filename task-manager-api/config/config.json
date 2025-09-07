@@ -1,0 +1,8 @@
+{
+    "PostgresMigrationsDir": "infrastructure/postgres/migrations",
+    "Timeout": "5s",
+    "Async": {
+        "Run": true,
+        "Interval": "2m"
+    }
+}
