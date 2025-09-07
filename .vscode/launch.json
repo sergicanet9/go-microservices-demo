@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch task-manager-api",
+            "name": "Launch Task Manager API",
             "type": "go",
             "request": "launch",
             "mode": "auto",
