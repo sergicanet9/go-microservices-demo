@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/jessevdk/go-flags"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/app/api"
-	"github.com/sergicanet9/go-microservices-demo/task-manager-api/app/async"
 	_ "github.com/sergicanet9/go-microservices-demo/task-manager-api/app/docs"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/config"
 	"github.com/sergicanet9/scv-go-tools/v4/observability"
@@ -49,11 +48,6 @@ func main() {
 
 	a := api.New(ctx, cfg)
 	g.Go(a.RunHTTP(ctx, cancel))
-
-	if cfg.Async.Run {
-		async := async.New(cfg)
-		g.Go(async.Run(ctx, cancel))
-	}
 
 	<-ctx.Done()
 	observability.Logger().Printf("context canceled, the application will terminate...")

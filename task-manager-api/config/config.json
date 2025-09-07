@@ -1,7 +1,3 @@
 {
-    "Timeout": "5s",
-    "Async": {
-        "Run": true,
-        "Interval": "2m"
-    }
+    "Timeout": "5s"
 }

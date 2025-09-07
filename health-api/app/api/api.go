@@ -8,18 +8,26 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sergicanet9/go-microservices-demo/health-api/app/handlers"
 	"github.com/sergicanet9/go-microservices-demo/health-api/config"
+	"github.com/sergicanet9/go-microservices-demo/health-api/core/ports"
+	"github.com/sergicanet9/go-microservices-demo/health-api/core/services"
 	"github.com/sergicanet9/scv-go-tools/v3/observability"
 	"github.com/sergicanet9/scv-go-tools/v4/api/middlewares"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type api struct {
-	config config.Config
+	config   config.Config
+	services svs
+}
+
+type svs struct {
+	health ports.HealthService
 }
 
 // New creates a new API
 func New(ctx context.Context, cfg config.Config) (a api) {
 	a.config = cfg
+	a.services.health = services.NewHealthService(a.config)
 	return a
 }
 
@@ -33,7 +41,7 @@ func (a *api) RunHTTP(ctx context.Context, cancel context.CancelFunc) func() err
 
 		v1Router := router.PathPrefix("/health-api/v1").Subrouter()
 
-		healthHandler := handlers.NewHealthHandler(ctx, a.config)
+		healthHandler := handlers.NewHealthHandler(ctx, a.config, a.services.health)
 		handlers.SetHealthRoutes(v1Router, healthHandler)
 
 		v1Router.PathPrefix("/swagger").HandlerFunc(httpSwagger.WrapHandler)

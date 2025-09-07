@@ -7,11 +7,6 @@ import (
 	"github.com/sergicanet9/scv-go-tools/v4/api/utils"
 )
 
-type Async struct {
-	Run      bool
-	Interval utils.Duration
-}
-
 type Config struct {
 	// set in flags
 	Version     string
@@ -26,7 +21,6 @@ type Config struct {
 
 type config struct {
 	Timeout utils.Duration
-	Async   Async
 }
 
 // ReadConfig from the project´s JSON config files.

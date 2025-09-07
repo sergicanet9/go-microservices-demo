@@ -9,3 +9,6 @@ test-integration:
 swagger:
 	go install github.com/swaggo/swag/cmd/swag@latest
 	swag init -g cmd/main.go -o app/docs
+mocks:
+	go install github.com/vektra/mockery/v2@latest
+	mockery --dir=core/ports --all --output=test/mocks

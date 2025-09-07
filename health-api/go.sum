@@ -49,9 +49,11 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sergicanet9/scv-go-tools/v3 v3.12.1 h1:gcQ34tezFwWXK3DMsUlQeTQbmQsy++Zs2Es73NnJDq0=
 github.com/sergicanet9/scv-go-tools/v3 v3.12.1/go.mod h1:ORAHaJSYF6FDAEywGRUShs6UTUN04J42IEYz2OzzLfM=
-github.com/sergicanet9/scv-go-tools/v4 v4.0.2 h1:dmih0c/0WpAeE6g0OV5ymFkPYlui2/gFu/H2TWzjcTc=
-github.com/sergicanet9/scv-go-tools/v4 v4.0.2/go.mod h1:PJPWc9u3LZhDy8/uZwoz0hC0RnPTqok2feHSTp4byZA=
+github.com/sergicanet9/scv-go-tools/v4 v4.1.0 h1:AzBTfTbJ/6QClFRmOI6J8XvapgWjjIoaiypg7B4gstw=
+github.com/sergicanet9/scv-go-tools/v4 v4.1.0/go.mod h1:PJPWc9u3LZhDy8/uZwoz0hC0RnPTqok2feHSTp4byZA=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+github.com/stretchr/objx v0.5.2 h1:xuMeJ0Sdp5ZMRXx/aWO6RZxdr3beISkG5/G/aIRr3pY=
+github.com/stretchr/objx v0.5.2/go.mod h1:FRsXN1f5AsAjCGJKqEizvkpNtU+EGNCLh3NxZ/8L+MA=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
