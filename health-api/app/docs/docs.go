@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/health": {
             "get": {
-                "description": "Returns basic runtime information of the API when the service is up",
+                "description": "Returns the status of all the microservices in the system",
                 "tags": [
                     "Health"
                 ],

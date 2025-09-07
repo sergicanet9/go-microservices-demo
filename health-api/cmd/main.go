@@ -24,6 +24,7 @@ func main() {
 		Version     string `long:"ver" description:"Version" required:"true"`
 		Environment string `long:"env" description:"Environment" choice:"local" choice:"prod" required:"true"`
 		HTTPPort    int    `long:"hport" description:"Running HTTP port" required:"true"`
+		URLs        string `long:"urls" description:"Comma separated list of the health URLs to check" required:"true"`
 	}
 
 	args, err := flags.Parse(&opts)
@@ -31,7 +32,7 @@ func main() {
 		observability.Logger().Fatal(fmt.Errorf("provided flags not valid: %s, %w", args, err))
 	}
 
-	cfg, err := config.ReadConfig(opts.Version, opts.Environment, opts.HTTPPort, "config")
+	cfg, err := config.ReadConfig(opts.Version, opts.Environment, opts.HTTPPort, opts.URLs, "config")
 	if err != nil {
 		observability.Logger().Fatal(fmt.Errorf("cannot parse config file for env %s: %w", opts.Environment, err))
 	}

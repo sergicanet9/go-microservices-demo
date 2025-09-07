@@ -73,6 +73,7 @@ services:
     environment:
       - env=$ENV
       - hp=$TASK_MANAGER_API_CONTAINER_HTTP_PORT
+      - urls=$HEALTH_URL_TASK_MANAGER_API,$HEALTH_URL_USER_MANAGEMENT_API
     depends_on:
       - task-manager-api
       - user-management-api

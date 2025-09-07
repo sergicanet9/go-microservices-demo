@@ -2,14 +2,15 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/sergicanet9/go-microservices-demo/health-api/config"
+	"github.com/sergicanet9/scv-go-tools/v4/api/utils"
 )
 
 type healthHandler struct {
@@ -30,99 +31,81 @@ func SetHealthRoutes(router *mux.Router, h healthHandler) {
 	router.HandleFunc("/health", h.healthCheck).Methods(http.MethodGet)
 }
 
-const (
-	taskManagerHealthURL    = "http://task-manager-api/v1/health"
-	userManagementHealthURL = "http://user-management-api/v1/health"
-)
-
-// HealthStatus represents the status of a single service.
+// HealthStatus represents the status of a single service. # TODO move to models
 type HealthStatus struct {
-	Service string `json:"service"`
-	Status  string `json:"status"`
-	Message string `json:"message,omitempty"`
+	ServiceURL string `json:"service_url"`
+	Status     string `json:"status"`
+	Message    string `json:"message,omitempty"`
 }
 
-// Global variable to store the final combined status.
-var finalStatus = "OK"
-
+// TODO make it work with vscode launch.json
 // @Summary Health check
-// @Description Returns basic runtime information of the API when the service is up
+// @Description Returns the status of all the microservices in the system
 // @Tags Health
 // @Success 200 "OK"
 // @Router /health [get]
 func (h *healthHandler) healthCheck(w http.ResponseWriter, r *http.Request) {
+	servicesToCheck := strings.Split(h.cfg.URLs, ",")
+	if len(servicesToCheck) == 0 {
+		http.Error(w, "No services to check", http.StatusServiceUnavailable)
+		return
+	}
+
 	var wg sync.WaitGroup
-	results := make(chan HealthStatus, 2)
+	results := make(chan HealthStatus, len(servicesToCheck))
 
-	// Set the global status back to OK for each new request.
-	finalStatus = "OK"
+	overallStatus := http.StatusOK
 
-	// Call the health check for Task Manager concurrently.
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		results <- checkServiceHealth(r.Context(), taskManagerHealthURL, "task-manager-api")
-	}()
+	for _, serviceURL := range servicesToCheck {
+		if serviceURL == "" {
+			continue
+		}
+		wg.Add(1)
+		go func(url string) {
+			defer wg.Done()
+			results <- h.checkServiceHealth(r.Context(), url, url)
+		}(serviceURL)
+	}
 
-	// Call the health check for User Management concurrently.
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		results <- checkServiceHealth(r.Context(), userManagementHealthURL, "user-management-api")
-	}()
-
-	// Wait for both goroutines to finish.
 	wg.Wait()
 	close(results)
 
-	// Collect the results.
 	var healthStatuses []HealthStatus
 	for res := range results {
 		healthStatuses = append(healthStatuses, res)
+		if res.Status == "UNHEALTHY" {
+			overallStatus = http.StatusServiceUnavailable
+		}
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-
-	// Set the final HTTP status code.
-	if finalStatus == "UNHEALTHY" {
-		w.WriteHeader(http.StatusServiceUnavailable)
-	} else {
-		w.WriteHeader(http.StatusOK)
-	}
-
-	// Write the JSON response.
-	json.NewEncoder(w).Encode(healthStatuses)
+	utils.SuccessResponse(w, overallStatus, healthStatuses)
 }
 
-// checkServiceHealth makes a GET request and returns a HealthStatus.
-func checkServiceHealth(ctx context.Context, url string, serviceName string) HealthStatus {
-	// Create an HTTP client with a 5-second timeout.
+func (h *healthHandler) checkServiceHealth(ctx context.Context, url string, serviceName string) HealthStatus {
 	client := &http.Client{Timeout: 5 * time.Second}
 
 	req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 	resp, err := client.Do(req)
 
 	if err != nil {
-		finalStatus = "UNHEALTHY"
 		return HealthStatus{
-			Service: serviceName,
-			Status:  "UNHEALTHY",
-			Message: err.Error(),
+			ServiceURL: serviceName,
+			Status:     "UNHEALTHY",
+			Message:    err.Error(),
 		}
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		finalStatus = "UNHEALTHY"
 		return HealthStatus{
-			Service: serviceName,
-			Status:  "UNHEALTHY",
-			Message: fmt.Sprintf("received status code: %d", resp.StatusCode),
+			ServiceURL: serviceName,
+			Status:     "UNHEALTHY",
+			Message:    fmt.Sprintf("received status code: %d", resp.StatusCode),
 		}
 	}
 
 	return HealthStatus{
-		Service: serviceName,
-		Status:  "OK",
+		ServiceURL: serviceName,
+		Status:     "OK",
 	}
 }

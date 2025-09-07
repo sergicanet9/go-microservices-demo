@@ -24,7 +24,7 @@ ENV env=$environment
 ARG httpPort
 ENV hp=$httpPort
 
-ARG dsn
-ENV dsn=$dsn
+ARG urls
+ENV urls=$urls
 
-CMD ["sh", "-c", "bin/main --ver $v --env $env --hport $hp"]
+CMD ["sh", "-c", "bin/main --ver $v --env $env --hport $hp --urls $urls"]
