@@ -47,8 +47,6 @@ github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWb
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/sergicanet9/scv-go-tools/v3 v3.12.1 h1:gcQ34tezFwWXK3DMsUlQeTQbmQsy++Zs2Es73NnJDq0=
-github.com/sergicanet9/scv-go-tools/v3 v3.12.1/go.mod h1:ORAHaJSYF6FDAEywGRUShs6UTUN04J42IEYz2OzzLfM=
 github.com/sergicanet9/scv-go-tools/v4 v4.1.0 h1:AzBTfTbJ/6QClFRmOI6J8XvapgWjjIoaiypg7B4gstw=
 github.com/sergicanet9/scv-go-tools/v4 v4.1.0/go.mod h1:PJPWc9u3LZhDy8/uZwoz0hC0RnPTqok2feHSTp4byZA=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

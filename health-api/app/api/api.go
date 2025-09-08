@@ -10,8 +10,8 @@ import (
 	"github.com/sergicanet9/go-microservices-demo/health-api/config"
 	"github.com/sergicanet9/go-microservices-demo/health-api/core/ports"
 	"github.com/sergicanet9/go-microservices-demo/health-api/core/services"
-	"github.com/sergicanet9/scv-go-tools/v3/observability"
 	"github.com/sergicanet9/scv-go-tools/v4/api/middlewares"
+	"github.com/sergicanet9/scv-go-tools/v4/observability"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 

@@ -10,7 +10,9 @@ import (
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/config"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/ports"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/services"
+	"github.com/sergicanet9/go-microservices-demo/task-manager-api/infrastructure/mongo"
 	"github.com/sergicanet9/scv-go-tools/v4/api/middlewares"
+	"github.com/sergicanet9/scv-go-tools/v4/infrastructure"
 	"github.com/sergicanet9/scv-go-tools/v4/observability"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -27,7 +29,19 @@ type svs struct {
 // New creates a new API
 func New(ctx context.Context, cfg config.Config) (a api) {
 	a.config = cfg
-	a.services.task = services.NewTaskService(a.config)
+
+	db, err := infrastructure.ConnectMongoDB(ctx, a.config.DSN)
+	if err != nil {
+		observability.Logger().Fatal(err)
+	}
+
+	taskRepo, err := mongo.NewTaskRepository(ctx, db)
+	if err != nil {
+		observability.Logger().Fatal(err)
+	}
+
+	a.services.task = services.NewTaskService(a.config, taskRepo)
+
 	return a
 }
 
@@ -44,6 +58,9 @@ func (a *api) RunHTTP(ctx context.Context, cancel context.CancelFunc) func() err
 
 		healthHandler := handlers.NewHealthHandler(ctx, a.config)
 		handlers.SetHealthRoutes(v1Router, healthHandler)
+
+		taskHandler := handlers.NewTaskHandler(ctx, a.config, a.services.task)
+		handlers.SetTaskRoutes(router, taskHandler)
 
 		v1Router.PathPrefix("/swagger").HandlerFunc(httpSwagger.WrapHandler)
 

@@ -14,7 +14,7 @@ import (
 	"github.com/sergicanet9/go-microservices-demo/health-api/core/models"
 	"github.com/sergicanet9/go-microservices-demo/health-api/core/ports"
 	"github.com/sergicanet9/go-microservices-demo/health-api/test/mocks"
-	"github.com/sergicanet9/scv-go-tools/v3/testutils"
+	"github.com/sergicanet9/scv-go-tools/v4/testutils"
 	"github.com/sergicanet9/scv-go-tools/v4/wrappers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
