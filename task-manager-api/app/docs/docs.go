@@ -29,7 +29,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/task": {
+        "/tasks": {
             "get": {
                 "security": [
                     {
@@ -83,7 +83,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/tasks/{id}": {
             "delete": {
                 "security": [
                     {
@@ -169,7 +171,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/task-manager-api/v1",
 	Schemes:          []string{},
 	Title:            "Task Manager API",
-	Description:      "",
+	Description:      "Powered by scv-go-tools - https://github.com/sergicanet9/scv-go-tools",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

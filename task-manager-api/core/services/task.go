@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/config"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/entities"
@@ -31,6 +32,7 @@ func (t *taskService) Create(ctx context.Context, userID string, task models.Cre
 	// TODO check userID exists in user management api?
 	entity := entities.Task(task)
 	entity.UserID = userID
+	entity.CreatedAt = time.Now().UTC()
 
 	id, err := t.repository.Create(ctx, entity)
 	if err != nil {

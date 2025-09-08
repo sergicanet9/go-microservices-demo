@@ -11,6 +11,7 @@ definitions:
     type: object
 info:
   contact: {}
+  description: Powered by scv-go-tools - https://github.com/sergicanet9/scv-go-tools
   title: Health API
   version: v1
 paths:

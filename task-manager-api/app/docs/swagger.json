@@ -1,6 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
+        "description": "Powered by scv-go-tools - https://github.com/sergicanet9/scv-go-tools",
         "title": "Task Manager API",
         "contact": {},
         "version": "v1"
@@ -21,7 +22,7 @@
                 }
             }
         },
-        "/task": {
+        "/tasks": {
             "get": {
                 "security": [
                     {
@@ -75,7 +76,9 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/tasks/{id}": {
             "delete": {
                 "security": [
                     {

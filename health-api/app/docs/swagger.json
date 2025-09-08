@@ -1,6 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
+        "description": "Powered by scv-go-tools - https://github.com/sergicanet9/scv-go-tools",
         "title": "Health API",
         "contact": {},
         "version": "v1"

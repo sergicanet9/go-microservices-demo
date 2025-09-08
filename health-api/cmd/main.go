@@ -15,10 +15,9 @@ import (
 )
 
 // @title Health API
+// @description Powered by scv-go-tools - https://github.com/sergicanet9/scv-go-tools
 // @version v1
 // @BasePath /health-api/v1
-// @tag.description Powered by scv-go-tools
-// @tag.docs.url https://github.com/sergicanet9/scv-go-tools
 func main() {
 	var opts struct {
 		Version           string `long:"ver" description:"Version" required:"true"`

@@ -47,7 +47,7 @@ func SetTaskRoutes(router *mux.Router, t taskHandler) {
 // @Security Bearer
 // @Param user body models.CreateTaskReq true "Create Task Request"
 // @Success 201 {object} models.CreateTaskResp
-// @Router /task [post]
+// @Router /tasks [post]
 func (t *taskHandler) createTask(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(t.ctx, t.cfg.Timeout.Duration)
 	defer cancel()
@@ -84,7 +84,7 @@ func (t *taskHandler) createTask(w http.ResponseWriter, r *http.Request) {
 // @Tags Tasks
 // @Security Bearer
 // @Success 200 {array} models.GetTaskResp
-// @Router /task [get]
+// @Router /tasks [get]
 func (t *taskHandler) getTasks(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(t.ctx, t.cfg.Timeout.Duration)
 	defer cancel()
@@ -109,7 +109,7 @@ func (t *taskHandler) getTasks(w http.ResponseWriter, r *http.Request) {
 // @Security Bearer
 // @Param id path string true "Task ID"
 // @Success 200
-// @Router /task [delete]
+// @Router /tasks/{id} [delete]
 func (t *taskHandler) deleteTask(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(t.ctx, t.cfg.Timeout.Duration)
 	defer cancel()

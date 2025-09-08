@@ -8,7 +8,6 @@ import (
 	"github.com/sergicanet9/scv-go-tools/v4/infrastructure"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // taskRepository adapter of a task repository for mongo.
@@ -29,8 +28,7 @@ func NewTaskRepository(ctx context.Context, db *mongo.Database) (ports.TaskRepos
 	_, err := r.Collection.Indexes().CreateOne(
 		ctx,
 		mongo.IndexModel{
-			Keys:    bson.D{{Key: "email", Value: 1}},
-			Options: options.Index().SetUnique(true),
+			Keys: bson.D{{Key: "user_id", Value: 1}},
 		},
 	)
 	return r, err

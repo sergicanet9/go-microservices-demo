@@ -27,6 +27,7 @@ definitions:
     type: object
 info:
   contact: {}
+  description: Powered by scv-go-tools - https://github.com/sergicanet9/scv-go-tools
   title: Task Manager API
   version: v1
 paths:
@@ -40,23 +41,7 @@ paths:
       summary: Health check
       tags:
       - Health
-  /task:
-    delete:
-      description: Deletes a tasks for the logged in user
-      parameters:
-      - description: Task ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-      security:
-      - Bearer: []
-      summary: Delete task
-      tags:
-      - Tasks
+  /tasks:
     get:
       description: Gets all tasks for the logged in user
       responses:
@@ -88,6 +73,23 @@ paths:
       security:
       - Bearer: []
       summary: Create task
+      tags:
+      - Tasks
+  /tasks/{id}:
+    delete:
+      description: Deletes a tasks for the logged in user
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      security:
+      - Bearer: []
+      summary: Delete task
       tags:
       - Tasks
 securityDefinitions:

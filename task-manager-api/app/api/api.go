@@ -59,7 +59,7 @@ func (a *api) RunHTTP(ctx context.Context, cancel context.CancelFunc) func() err
 		handlers.SetHealthRoutes(v1Router, healthHandler)
 
 		taskHandler := handlers.NewTaskHandler(ctx, a.config, a.services.task)
-		handlers.SetTaskRoutes(router, taskHandler)
+		handlers.SetTaskRoutes(v1Router, taskHandler)
 
 		v1Router.PathPrefix("/swagger").HandlerFunc(httpSwagger.WrapHandler)
 

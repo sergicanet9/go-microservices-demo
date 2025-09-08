@@ -61,7 +61,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/health-api/v1",
 	Schemes:          []string{},
 	Title:            "Health API",
-	Description:      "",
+	Description:      "Powered by scv-go-tools - https://github.com/sergicanet9/scv-go-tools",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
