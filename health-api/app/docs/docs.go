@@ -24,8 +24,30 @@ const docTemplate = `{
                 "summary": "Health check",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.HealthResp"
+                            }
+                        }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.HealthResp": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "service_url": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         }

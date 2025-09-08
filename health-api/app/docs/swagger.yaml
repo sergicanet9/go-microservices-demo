@@ -1,4 +1,14 @@
 basePath: /health-api/v1
+definitions:
+  models.HealthResp:
+    properties:
+      error:
+        type: string
+      service_url:
+        type: string
+      status:
+        type: string
+    type: object
 info:
   contact: {}
   title: Health API
@@ -10,6 +20,10 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.HealthResp'
+            type: array
       summary: Health check
       tags:
       - Health

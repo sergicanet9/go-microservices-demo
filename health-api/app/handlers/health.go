@@ -35,7 +35,7 @@ func SetHealthRoutes(router *mux.Router, h healthHandler) {
 // @Summary Health check
 // @Description Returns the status of all the microservices in the system
 // @Tags Health
-// @Success 200 "OK"
+// @Success 200 {array} models.HealthResp
 // @Router /health [get]
 func (h *healthHandler) healthCheck(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(h.ctx, h.cfg.Timeout.Duration)

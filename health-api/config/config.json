@@ -2,6 +2,6 @@
     "Timeout": "5s",
     "Async": {
         "Run": true,
-        "Interval": "30s"
+        "Interval": "2m"
     }
 }
