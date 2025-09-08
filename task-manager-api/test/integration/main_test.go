@@ -26,8 +26,9 @@ const (
 	mongoPassword      = "test"
 	mongoContainerPort = "27017/tcp"
 	mongoDSNEnv        = "mongoDSN"
-	jwtSecret          = "eaeBbXUxks"
-	nonExpiryToken     = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiYXV0aG9yaXplZCI6dHJ1ZX0.cCKM32os5ROKxeE3IiDWoOyRew9T8puzPUKurPhrDug"
+	jwtSecret          = "test-secret"
+	nonExpiryToken     = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiYXV0aG9yaXplZCI6dHJ1ZSwidXNlcl9pZCI6IjFkNjBiMzQ3LTViMTUtNGE2Ni1iMzg2LTcyMTY2MzNhZWQ4ZCJ9.nwR6X3UNZNeHxYM4WBGoz7tOdS63lY7Hfu2VVex4HvY"
+	tokenUserID        = "1d60b347-5b15-4a66-b386-7216633aed8d"
 )
 
 // TestMain does the setup before running the tests and the teardown afterwards
