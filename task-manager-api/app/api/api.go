@@ -8,6 +8,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/app/handlers"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/config"
+	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/ports"
+	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/services"
 	"github.com/sergicanet9/scv-go-tools/v4/api/middlewares"
 	"github.com/sergicanet9/scv-go-tools/v4/observability"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -19,11 +21,13 @@ type api struct {
 }
 
 type svs struct {
+	task ports.TaskService
 }
 
 // New creates a new API
 func New(ctx context.Context, cfg config.Config) (a api) {
 	a.config = cfg
+	a.services.task = services.NewTaskService(a.config)
 	return a
 }
 

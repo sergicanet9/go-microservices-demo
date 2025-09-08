@@ -20,3 +20,5 @@ func TestNewHealthService_Ok(t *testing.T) {
 	// Assert
 	assert.NotEmpty(t, service)
 }
+
+// TODO test

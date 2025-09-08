@@ -13,7 +13,7 @@ import (
 	"github.com/sergicanet9/scv-go-tools/v4/wrappers"
 )
 
-// userService adapter of an health service
+// healthService adapter of an health service
 type healthService struct {
 	config config.Config
 }
