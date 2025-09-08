@@ -9,7 +9,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -26,12 +26,14 @@ import (
 func TestCreateTask_Ok(t *testing.T) {
 	// Arrange
 	r := mux.NewRouter()
+	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiYXV0aG9yaXplZCI6dHJ1ZSwidXNlcl9pZCI6IjFkNjBiMzQ3LTViMTUtNGE2Ni1iMzg2LTcyMTY2MzNhZWQ4ZCJ9.nwR6X3UNZNeHxYM4WBGoz7tOdS63lY7Hfu2VVex4HvY"
 
 	taskService := mocks.NewTaskService(t)
 	expectedResp := models.CreateTaskResp{ID: "new-task-id"}
-	taskService.On(testutils.FunctionName(t, ports.TaskService.Create), mock.Anything, "user-123", mock.Anything).Return(expectedResp, nil).Once()
+	taskService.On(testutils.FunctionName(t, ports.TaskService.Create), mock.Anything, mock.Anything, mock.Anything).Return(expectedResp, nil).Once()
 
 	cfg := config.Config{}
+	cfg.JWTSecret = "test-secret"
 	taskHandler := NewTaskHandler(context.Background(), cfg, taskService)
 	SetTaskRoutes(r, taskHandler)
 
@@ -39,8 +41,7 @@ func TestCreateTask_Ok(t *testing.T) {
 	body := models.CreateTaskReq{Title: "test task"}
 	b, _ := json.Marshal(body)
 	req := httptest.NewRequest(http.MethodPost, "/tasks", bytes.NewReader(b))
-	claims := jwt.MapClaims{"user_id": "user-123"}
-	req = req.WithContext(context.WithValue(req.Context(), middlewares.ClaimsKey, claims))
+	req.Header.Set("Authorization", token)
 
 	// Act
 	r.ServeHTTP(rr, req)
@@ -56,16 +57,17 @@ func TestCreateTask_Ok(t *testing.T) {
 func TestCreateTask_InvalidRequest(t *testing.T) {
 	// Arrange
 	r := mux.NewRouter()
+	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiYXV0aG9yaXplZCI6dHJ1ZSwidXNlcl9pZCI6IjFkNjBiMzQ3LTViMTUtNGE2Ni1iMzg2LTcyMTY2MzNhZWQ4ZCJ9.nwR6X3UNZNeHxYM4WBGoz7tOdS63lY7Hfu2VVex4HvY"
 
 	cfg := config.Config{}
+	cfg.JWTSecret = "test-secret"
 	taskHandler := NewTaskHandler(context.Background(), cfg, nil)
 	SetTaskRoutes(r, taskHandler)
 
 	rr := httptest.NewRecorder()
 	invalidBody := []byte(`{"Email":invalid-type}`)
 	req := httptest.NewRequest(http.MethodPost, "/tasks", bytes.NewReader(invalidBody))
-	claims := jwt.MapClaims{"user_id": "user-123"}
-	req = req.WithContext(context.WithValue(req.Context(), middlewares.ClaimsKey, claims))
+	req.Header.Set("Authorization", token)
 
 	// Act
 	r.ServeHTTP(rr, req)
@@ -78,11 +80,13 @@ func TestCreateTask_InvalidRequest(t *testing.T) {
 func TestCreateTask_ServiceError(t *testing.T) {
 	// Arrange
 	r := mux.NewRouter()
+	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiYXV0aG9yaXplZCI6dHJ1ZSwidXNlcl9pZCI6IjFkNjBiMzQ3LTViMTUtNGE2Ni1iMzg2LTcyMTY2MzNhZWQ4ZCJ9.nwR6X3UNZNeHxYM4WBGoz7tOdS63lY7Hfu2VVex4HvY"
 
 	taskService := mocks.NewTaskService(t)
-	taskService.On(testutils.FunctionName(t, ports.TaskService.Create), mock.Anything, "user-123", mock.Anything).Return(models.CreateTaskResp{}, errors.New("service failure")).Once()
+	taskService.On(testutils.FunctionName(t, ports.TaskService.Create), mock.Anything, mock.Anything, mock.Anything).Return(models.CreateTaskResp{}, errors.New("service failure")).Once()
 
 	cfg := config.Config{}
+	cfg.JWTSecret = "test-secret"
 	taskHandler := NewTaskHandler(context.Background(), cfg, taskService)
 	SetTaskRoutes(r, taskHandler)
 
@@ -90,8 +94,7 @@ func TestCreateTask_ServiceError(t *testing.T) {
 	body := models.CreateTaskReq{Title: "bad task"}
 	b, _ := json.Marshal(body)
 	req := httptest.NewRequest(http.MethodPost, "/tasks", bytes.NewReader(b))
-	claims := jwt.MapClaims{"user_id": "user-123"}
-	req = req.WithContext(context.WithValue(req.Context(), middlewares.ClaimsKey, claims))
+	req.Header.Set("Authorization", token)
 
 	// Act
 	r.ServeHTTP(rr, req)
@@ -104,19 +107,20 @@ func TestCreateTask_ServiceError(t *testing.T) {
 func TestGetTasks_Ok(t *testing.T) {
 	// Arrange
 	r := mux.NewRouter()
+	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiYXV0aG9yaXplZCI6dHJ1ZSwidXNlcl9pZCI6IjFkNjBiMzQ3LTViMTUtNGE2Ni1iMzg2LTcyMTY2MzNhZWQ4ZCJ9.nwR6X3UNZNeHxYM4WBGoz7tOdS63lY7Hfu2VVex4HvY"
 
 	taskService := mocks.NewTaskService(t)
 	expectedResp := []models.GetTaskResp{{ID: "task-123", Title: "test task"}}
-	taskService.On(testutils.FunctionName(t, ports.TaskService.GetByUserID), mock.Anything, "user-123").Return(expectedResp, nil).Once()
+	taskService.On(testutils.FunctionName(t, ports.TaskService.GetByUserID), mock.Anything, mock.Anything).Return(expectedResp, nil).Once()
 
 	cfg := config.Config{}
+	cfg.JWTSecret = "test-secret"
 	taskHandler := NewTaskHandler(context.Background(), cfg, taskService)
 	SetTaskRoutes(r, taskHandler)
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/tasks", nil)
-	claims := jwt.MapClaims{"user_id": "user-123"}
-	req = req.WithContext(context.WithValue(req.Context(), middlewares.ClaimsKey, claims))
+	req.Header.Set("Authorization", token)
 
 	// Act
 	r.ServeHTTP(rr, req)
@@ -132,18 +136,19 @@ func TestGetTasks_Ok(t *testing.T) {
 func TestGetTasks_ServiceError(t *testing.T) {
 	// Arrange
 	r := mux.NewRouter()
+	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiYXV0aG9yaXplZCI6dHJ1ZSwidXNlcl9pZCI6IjFkNjBiMzQ3LTViMTUtNGE2Ni1iMzg2LTcyMTY2MzNhZWQ4ZCJ9.nwR6X3UNZNeHxYM4WBGoz7tOdS63lY7Hfu2VVex4HvY"
 
 	taskService := mocks.NewTaskService(t)
-	taskService.On(testutils.FunctionName(t, ports.TaskService.GetByUserID), mock.Anything, "user-123").Return([]models.GetTaskResp{}, errors.New("service failure")).Once()
+	taskService.On(testutils.FunctionName(t, ports.TaskService.GetByUserID), mock.Anything, mock.Anything).Return([]models.GetTaskResp{}, errors.New("service failure")).Once()
 
 	cfg := config.Config{}
+	cfg.JWTSecret = "test-secret"
 	taskHandler := NewTaskHandler(context.Background(), cfg, taskService)
 	SetTaskRoutes(r, taskHandler)
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/tasks", nil)
-	claims := jwt.MapClaims{"user_id": "user-123"}
-	req = req.WithContext(context.WithValue(req.Context(), middlewares.ClaimsKey, claims))
+	req.Header.Set("Authorization", token)
 
 	// Act
 	r.ServeHTTP(rr, req)
@@ -156,18 +161,19 @@ func TestGetTasks_ServiceError(t *testing.T) {
 func TestDeleteTask_Ok(t *testing.T) {
 	// Arrange
 	r := mux.NewRouter()
+	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiYXV0aG9yaXplZCI6dHJ1ZSwidXNlcl9pZCI6IjFkNjBiMzQ3LTViMTUtNGE2Ni1iMzg2LTcyMTY2MzNhZWQ4ZCJ9.nwR6X3UNZNeHxYM4WBGoz7tOdS63lY7Hfu2VVex4HvY"
 
 	taskService := mocks.NewTaskService(t)
-	taskService.On(testutils.FunctionName(t, ports.TaskService.Delete), mock.Anything, "user-123", "task-123").Return(nil).Once()
+	taskService.On(testutils.FunctionName(t, ports.TaskService.Delete), mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 
 	cfg := config.Config{}
+	cfg.JWTSecret = "test-secret"
 	taskHandler := NewTaskHandler(context.Background(), cfg, taskService)
 	SetTaskRoutes(r, taskHandler)
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodDelete, "/tasks/task-123", nil)
-	claims := jwt.MapClaims{"user_id": "user-123"}
-	req = req.WithContext(context.WithValue(req.Context(), middlewares.ClaimsKey, claims))
+	req.Header.Set("Authorization", token)
 
 	// Act
 	r.ServeHTTP(rr, req)
@@ -180,18 +186,19 @@ func TestDeleteTask_Ok(t *testing.T) {
 func TestDeleteTask_ServiceError(t *testing.T) {
 	// Arrange
 	r := mux.NewRouter()
+	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiYXV0aG9yaXplZCI6dHJ1ZSwidXNlcl9pZCI6IjFkNjBiMzQ3LTViMTUtNGE2Ni1iMzg2LTcyMTY2MzNhZWQ4ZCJ9.nwR6X3UNZNeHxYM4WBGoz7tOdS63lY7Hfu2VVex4HvY"
 
 	taskService := mocks.NewTaskService(t)
-	taskService.On(testutils.FunctionName(t, ports.TaskService.Delete), mock.Anything, "user-123", "task-123").Return(errors.New("service failure")).Once()
+	taskService.On(testutils.FunctionName(t, ports.TaskService.Delete), mock.Anything, mock.Anything, mock.Anything).Return(errors.New("service failure")).Once()
 
 	cfg := config.Config{}
+	cfg.JWTSecret = "test-secret"
 	taskHandler := NewTaskHandler(context.Background(), cfg, taskService)
 	SetTaskRoutes(r, taskHandler)
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodDelete, "/tasks/task-123", nil)
-	claims := jwt.MapClaims{"user_id": "user-123"}
-	req = req.WithContext(context.WithValue(req.Context(), middlewares.ClaimsKey, claims))
+	req.Header.Set("Authorization", token)
 
 	// Act
 	r.ServeHTTP(rr, req)

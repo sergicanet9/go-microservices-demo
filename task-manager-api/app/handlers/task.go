@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/config"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/models"
@@ -33,16 +33,19 @@ func NewTaskHandler(ctx context.Context, cfg config.Config, svc ports.TaskServic
 
 // SetTaskRoutes creates task routes
 func SetTaskRoutes(router *mux.Router, t taskHandler) {
-	router.HandleFunc("/tasks", t.createTask).Methods(http.MethodPost)
-	router.HandleFunc("/tasks", t.getTasks).Methods(http.MethodGet)
-	router.HandleFunc("/tasks/{id}", t.deleteTask).Methods(http.MethodDelete)
+	secureRouter := router.PathPrefix("").Subrouter()
+	secureRouter.Use(middlewares.JWT(t.cfg.JWTSecret, "user_id"))
+
+	secureRouter.HandleFunc("/tasks", t.createTask).Methods(http.MethodPost)
+	secureRouter.HandleFunc("/tasks", t.getTasks).Methods(http.MethodGet)
+	secureRouter.HandleFunc("/tasks/{id}", t.deleteTask).Methods(http.MethodDelete)
 }
 
 // @Summary Create task
 // @Description Creates a new task for the logged in user
 // @Tags Tasks
 // @Security Bearer
-// @Param user body models.CreateTaskReq true
+// @Param user body models.CreateTaskReq true "Create Task Request"
 // @Success 201 {object} models.CreateTaskResp
 // @Router /task [post]
 func (t *taskHandler) createTask(w http.ResponseWriter, r *http.Request) {
@@ -104,7 +107,7 @@ func (t *taskHandler) getTasks(w http.ResponseWriter, r *http.Request) {
 // @Description Deletes a tasks for the logged in user
 // @Tags Tasks
 // @Security Bearer
-// @Param id path string true
+// @Param id path string true "Task ID"
 // @Success 200
 // @Router /task [delete]
 func (t *taskHandler) deleteTask(w http.ResponseWriter, r *http.Request) {

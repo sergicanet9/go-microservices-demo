@@ -1,4 +1,30 @@
 basePath: /task-manager-api/v1
+definitions:
+  models.CreateTaskReq:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    type: object
+  models.CreateTaskResp:
+    properties:
+      id:
+        type: string
+    type: object
+  models.GetTaskResp:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: string
+    type: object
 info:
   contact: {}
   title: Task Manager API
@@ -14,6 +40,56 @@ paths:
       summary: Health check
       tags:
       - Health
+  /task:
+    delete:
+      description: Deletes a tasks for the logged in user
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      security:
+      - Bearer: []
+      summary: Delete task
+      tags:
+      - Tasks
+    get:
+      description: Gets all tasks for the logged in user
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.GetTaskResp'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get tasks
+      tags:
+      - Tasks
+    post:
+      description: Creates a new task for the logged in user
+      parameters:
+      - description: Create Task Request
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateTaskReq'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.CreateTaskResp'
+      security:
+      - Bearer: []
+      summary: Create task
+      tags:
+      - Tasks
 securityDefinitions:
   Bearer:
     in: header
