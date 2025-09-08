@@ -49,7 +49,6 @@ func testConfig(t *testing.T) (c config.Config, err error) {
 	c.Version = "Integration tests"
 	c.Environment = "Integration tests"
 	c.HTTPPort = testutils.FreePort(t)
-	c.URLs = "https://www.google.com"
 
 	c.Timeout = utils.Duration{Duration: 30 * time.Second}
 

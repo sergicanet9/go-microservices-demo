@@ -24,7 +24,10 @@ ENV env=$environment
 ARG httpPort
 ENV hp=$httpPort
 
-ARG urls
-ENV urls=$urls
+ARG tasksURL
+ENV tasksurl=$tasksURL
 
-CMD ["sh", "-c", "bin/main --ver $v --env $env --hport $hp --urls $urls"]
+ARG usersURL
+ENV usersurl=$usersURL
+
+CMD ["sh", "-c", "bin/main --ver $v --env $env --hport $hp --tasksurl $tasksurl --usersurl $usersurl"]

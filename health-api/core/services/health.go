@@ -2,10 +2,8 @@ package services
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -29,11 +27,8 @@ func NewHealthService(cfg config.Config) ports.HealthService {
 
 // HealthCheck all services
 func (h *healthService) HealthCheck(ctx context.Context) ([]models.HealthResp, error) {
-	if h.config.URLs == "" {
-		return nil, errors.New("no URLs provided")
-	}
-
-	urls := strings.Split(h.config.URLs, ",")
+	healthRoute := "/health"
+	urls := []string{h.config.TaskManagerURL + healthRoute, h.config.UserManagementURL + healthRoute}
 
 	var wg sync.WaitGroup
 	results := make(chan models.HealthResp, len(urls)+1)
