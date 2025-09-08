@@ -16,6 +16,8 @@ const (
 	contentType = "application/json"
 )
 
+//TODO integration tests for health api
+
 // TestMain does the setup before running the tests and the teardown afterwards
 func TestMain(m *testing.M) {
 	// Runs the tests

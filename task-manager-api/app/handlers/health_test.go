@@ -20,8 +20,7 @@ func TestHealthCheck_Ok(t *testing.T) {
 	SetHealthRoutes(r, healthHandler)
 
 	rr := httptest.NewRecorder()
-	url := "http://testing/health"
-	req := httptest.NewRequest(http.MethodGet, url, nil)
+	req := httptest.NewRequest(http.MethodGet, "/health", nil)
 
 	// Act
 	r.ServeHTTP(rr, req)

@@ -34,6 +34,7 @@ func (a *api) RunHTTP(ctx context.Context, cancel context.CancelFunc) func() err
 		router := mux.NewRouter()
 		router.Use(middlewares.Logger("/swagger", "/docs.swagger.json", "/grpcui"))
 		router.Use(middlewares.Recover)
+		router.Use(middlewares.JWT(a.config.JWTSecret))
 
 		v1Router := router.PathPrefix("/task-manager-api/v1").Subrouter()
 
