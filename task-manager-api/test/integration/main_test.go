@@ -21,7 +21,7 @@ import (
 
 const (
 	contentType        = "application/json"
-	mongoDBName        = "test-db"
+	dbName             = "test-db"
 	mongoUser          = "mongo"
 	mongoPassword      = "test"
 	mongoContainerPort = "27017/tcp"
@@ -73,7 +73,7 @@ func setupMongo(pool *dockertest.Pool) *dockertest.Resource {
 		Repository: "mongo",
 		Tag:        "5.0",
 		Env: []string{
-			fmt.Sprintf("MONGO_INITDB_DATABASE=%s", mongoDBName),
+			fmt.Sprintf("MONGO_INITDB_DATABASE=%s", dbName),
 			fmt.Sprintf("MONGO_INITDB_ROOT_USERNAME=%s", mongoUser),
 			fmt.Sprintf("MONGO_INITDB_ROOT_PASSWORD=%s", mongoPassword),
 		},
@@ -98,7 +98,7 @@ func setupMongo(pool *dockertest.Pool) *dockertest.Resource {
 		log.Panicf("failure executing command in the resource, exit code was %d", exitCode)
 	}
 
-	dsn := fmt.Sprintf("mongodb://%s:%s@localhost:%s/%s?authSource=admin&connect=direct", mongoUser, mongoPassword, resource.GetPort(mongoContainerPort), mongoDBName)
+	dsn := fmt.Sprintf("mongodb://%s:%s@localhost:%s/%s?authSource=admin&connect=direct", mongoUser, mongoPassword, resource.GetPort(mongoContainerPort), dbName)
 	os.Setenv(mongoDSNEnv, dsn)
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet

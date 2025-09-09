@@ -30,7 +30,7 @@
                 "--ver", "debug",
                 "--env", "local",
                 "--hport", "8080",
-                "--dsn", "mongodb://mongo:admin@localhost:4041/gomicroservicesdemolocal?authSource=admin&connect=direct",
+                "--dsn", "mongodb://mongo:admin@localhost:4041/taskmanagerapilocal?authSource=admin&connect=direct",
                 "--jsecret", "X8mJc1Vb7K"
             ]
         }
