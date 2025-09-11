@@ -24,8 +24,8 @@ type Config struct {
 }
 
 type externalURLs struct {
-	TaskManagerURL    string
-	UserManagementURL string
+	TaskManagerURL       string
+	UserManagementTarget string
 }
 
 type config struct {
@@ -36,13 +36,13 @@ type config struct {
 // ReadConfig from the project´s JSON config files.
 // Default values are specified in the default configuration file, config/config.json
 // and can be overrided with values specified in the environment configuration files, config/config.{env}.json.
-func ReadConfig(version, env string, httpPort int, taskManagerURL, userManagementURL, configPath string) (Config, error) {
+func ReadConfig(version, env string, httpPort int, taskManagerURL, userManagementTarget, configPath string) (Config, error) {
 	var c Config
 	c.Version = version
 	c.Environment = env
 	c.HTTPPort = httpPort
 	c.TaskManagerURL = taskManagerURL
-	c.UserManagementURL = userManagementURL
+	c.UserManagementTarget = userManagementTarget
 
 	var cfg config
 

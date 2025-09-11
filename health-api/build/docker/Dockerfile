@@ -29,7 +29,7 @@ ENV hp=$httpPort
 ARG tasksURL
 ENV tasksurl=$tasksURL
 
-ARG usersURL
-ENV usersurl=$usersURL
+ARG usersGRPC
+ENV usersgrpc=$usersGRPC
 
-CMD ["sh", "-c", "bin/main --ver $v --env $env --hport $hp --tasksurl $tasksurl --usersurl $usersurl"]
+CMD ["sh", "-c", "bin/main --ver $v --env $env --hport $hp --tasksurl $tasksurl --usersgrpc $usersgrpc"]

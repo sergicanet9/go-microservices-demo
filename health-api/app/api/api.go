@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	taskManagerClient "github.com/sergicanet9/go-microservices-demo/common/clients/taskmanagerapi/v1"
+	userManagementClient "github.com/sergicanet9/go-microservices-demo/common/clients/usermanagementapi/v1"
 	handlersV1 "github.com/sergicanet9/go-microservices-demo/health-api/app/handlers/v1"
 	"github.com/sergicanet9/go-microservices-demo/health-api/config"
 	"github.com/sergicanet9/go-microservices-demo/health-api/core/ports"
@@ -27,7 +29,16 @@ type svs struct {
 // New creates a new API
 func New(ctx context.Context, cfg config.Config) (a api) {
 	a.config = cfg
-	a.services.health = services.NewHealthService(a.config)
+
+	taskManagerClient := taskManagerClient.NewHTTPClient(cfg.TaskManagerURL)
+
+	userManagementClient, err := userManagementClient.NewGRPCClient(ctx, cfg.UserManagementTarget)
+	if err != nil {
+		observability.Logger().Fatal(err)
+	}
+
+	a.services.health = services.NewHealthService(a.config, taskManagerClient, userManagementClient)
+
 	return a
 }
 

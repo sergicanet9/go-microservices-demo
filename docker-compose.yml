@@ -19,7 +19,7 @@ services:
       - env=$ENV
       - hp=$TASK_MANAGER_API_CONTAINER_HTTP_PORT
       - tasksurl=$TASK_MANAGER_API_BASE_URL
-      - usersurl=$USER_MANAGEMENT_API_BASE_URL # TODO remove from env when moved to grpc
+      - usersgrpc=$USER_MANAGEMENT_API_GRPC_TARGET
     depends_on:
       - task-manager-api
       - user-management-api

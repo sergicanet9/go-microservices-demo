@@ -27,8 +27,8 @@ func TestHealthCheck_Ok(t *testing.T) {
 	healthService := mocks.NewHealthService(t)
 	expectedResponse := []models.HealthResp{
 		{
-			ServiceURL: "http://test.com/health",
-			Status:     "HEALTHY",
+			Service: "http://test.com/health",
+			Status:  "HEALTHY",
 		},
 	}
 	healthService.On(testutils.FunctionName(t, ports.HealthService.HealthCheck), mock.Anything).Return(expectedResponse, nil)
@@ -63,8 +63,8 @@ func TestHealthCheck_ServiceUnavailable(t *testing.T) {
 	healthService := mocks.NewHealthService(t)
 	expectedResponse := []models.HealthResp{
 		{
-			ServiceURL: "http://test.com/health",
-			Status:     "UNHEALTHY",
+			Service: "http://test.com/health",
+			Status:  "UNHEALTHY",
 		},
 	}
 	healthService.On(testutils.FunctionName(t, ports.HealthService.HealthCheck), mock.Anything).Return(expectedResponse, wrappers.NewServiceUnavailableErr(fmt.Errorf("test-error")))

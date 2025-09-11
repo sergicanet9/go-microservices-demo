@@ -3,10 +3,9 @@ package services
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"sync"
-	"time"
 
+	commonPorts "github.com/sergicanet9/go-microservices-demo/common/clients/ports"
 	"github.com/sergicanet9/go-microservices-demo/health-api/config"
 	"github.com/sergicanet9/go-microservices-demo/health-api/core/models"
 	"github.com/sergicanet9/go-microservices-demo/health-api/core/ports"
@@ -15,79 +14,71 @@ import (
 
 // healthService adapter of an health service
 type healthService struct {
-	config config.Config
+	config               config.Config
+	taskManagerClient    commonPorts.TaskManagerV1HTTPClient
+	userManagementClient commonPorts.UserManagementV1GRPCClient
 }
 
 // NewHealthService creates a new health service
-func NewHealthService(cfg config.Config) ports.HealthService {
+func NewHealthService(cfg config.Config, taskManagerClient commonPorts.TaskManagerV1HTTPClient, userManagementClient commonPorts.UserManagementV1GRPCClient) ports.HealthService {
 	return &healthService{
-		config: cfg,
+		config:               cfg,
+		taskManagerClient:    taskManagerClient,
+		userManagementClient: userManagementClient,
 	}
 }
 
-// HealthCheck all services
+// HealthCheck all services concurrently
 func (h *healthService) HealthCheck(ctx context.Context) ([]models.HealthResp, error) {
-	healthRoute := "/health"
-	urls := []string{h.config.TaskManagerURL + healthRoute, h.config.UserManagementURL + healthRoute}
-
 	var wg sync.WaitGroup
-	results := make(chan models.HealthResp, len(urls)+1)
+	results := make(chan models.HealthResp, 3)
 
-	results <- models.HealthResp{
-		ServiceURL: "self",
-		Status:     "OK",
-	}
-
-	for _, serviceURL := range urls {
-		if serviceURL == "" {
-			continue
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		results <- models.HealthResp{
+			Service: "health-api (self)",
+			Status:  "OK",
 		}
-		wg.Add(1)
-		go func(url string) {
-			defer wg.Done()
-			results <- h.checkServiceHealth(ctx, url)
-		}(serviceURL)
-	}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err := h.userManagementClient.Health(ctx)
+		if err != nil {
+			results <- models.HealthResp{Service: "user-management-api", Status: "UNHEALTHY", Error: err.Error()}
+			return
+		}
+		results <- models.HealthResp{Service: "user-management-api", Status: "OK"}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err := h.taskManagerClient.Health(ctx)
+		if err != nil {
+			results <- models.HealthResp{Service: "task-manager-api", Status: "UNHEALTHY", Error: err.Error()}
+			return
+		}
+		results <- models.HealthResp{Service: "task-manager-api", Status: "OK"}
+	}()
 
 	wg.Wait()
 	close(results)
 
 	var healthResps []models.HealthResp
-	var err error
+	var serviceUnavailable bool
 	for res := range results {
-		if res.Error != "" {
-			err = wrappers.NewServiceUnavailableErr(fmt.Errorf("service unavailable"))
+		if res.Status == "UNHEALTHY" {
+			serviceUnavailable = true
 		}
 		healthResps = append(healthResps, res)
 	}
 
-	return healthResps, err
-}
-
-func (h *healthService) checkServiceHealth(ctx context.Context, url string) models.HealthResp {
-	client := &http.Client{Timeout: 5 * time.Second}
-	req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
-	resp, err := client.Do(req)
-
-	if err != nil {
-		return models.HealthResp{
-			ServiceURL: url,
-			Status:     "UNHEALTHY",
-			Error:      err.Error(),
-		}
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return models.HealthResp{
-			ServiceURL: url,
-			Status:     "UNHEALTHY",
-			Error:      fmt.Sprintf("received status code: %d", resp.StatusCode),
-		}
+	if serviceUnavailable {
+		return healthResps, wrappers.NewServiceUnavailableErr(fmt.Errorf("service unavailable"))
 	}
 
-	return models.HealthResp{
-		ServiceURL: url,
-		Status:     "OK",
-	}
+	return healthResps, nil
 }

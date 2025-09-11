@@ -20,11 +20,11 @@ import (
 // @BasePath /health-api/v1
 func main() {
 	var opts struct {
-		Version           string `long:"ver" description:"Version" required:"true"`
-		Environment       string `long:"env" description:"Environment" choice:"local" choice:"prod" required:"true"`
-		HTTPPort          int    `long:"hport" description:"Running HTTP port" required:"true"`
-		TaskManagerURL    string `long:"tasksurl" description:"Base URL of the Task Manager API" required:"true"`
-		UserManagementURL string `long:"usersurl" description:"Base URL of the User Management API" required:"true"`
+		Version              string `long:"ver" description:"Version" required:"true"`
+		Environment          string `long:"env" description:"Environment" choice:"local" choice:"prod" required:"true"`
+		HTTPPort             int    `long:"hport" description:"Running HTTP port" required:"true"`
+		TaskManagerURL       string `long:"tasksurl" description:"Base URL of the Task Manager API" required:"true"`
+		UserManagementTarget string `long:"usersgrpc" description:"Base gRPC target of the User Management API" required:"true"`
 	}
 
 	args, err := flags.Parse(&opts)
@@ -32,7 +32,7 @@ func main() {
 		observability.Logger().Fatal(fmt.Errorf("provided flags not valid: %s, %w", args, err))
 	}
 
-	cfg, err := config.ReadConfig(opts.Version, opts.Environment, opts.HTTPPort, opts.TaskManagerURL, opts.UserManagementURL, "config")
+	cfg, err := config.ReadConfig(opts.Version, opts.Environment, opts.HTTPPort, opts.TaskManagerURL, opts.UserManagementTarget, "config")
 	if err != nil {
 		observability.Logger().Fatal(fmt.Errorf("cannot parse config file for env %s: %w", opts.Environment, err))
 	}

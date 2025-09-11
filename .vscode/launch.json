@@ -16,7 +16,7 @@
                 "--env", "local",
                 "--hport", "8080",
                 "--tasksurl", "http://localhost:8083/task-manager-api/v1",
-                "--usersurl", "http://localhost:8084/v1"
+                "--usersgrpc", "localhost:50054"
             ]
         },
                 {
