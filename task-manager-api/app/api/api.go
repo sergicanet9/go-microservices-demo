@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/sergicanet9/go-microservices-demo/task-manager-api/app/handlers"
+	handlersV1 "github.com/sergicanet9/go-microservices-demo/task-manager-api/app/handlers/v1"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/config"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/ports"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/services"
@@ -55,11 +55,11 @@ func (a *api) RunHTTP(ctx context.Context, cancel context.CancelFunc) func() err
 
 		v1Router := router.PathPrefix("/task-manager-api/v1").Subrouter()
 
-		healthHandler := handlers.NewHealthHandler(ctx, a.config)
-		handlers.SetHealthRoutes(v1Router, healthHandler)
+		healthHandler := handlersV1.NewHealthHandler(ctx, a.config)
+		handlersV1.SetHealthRoutes(v1Router, healthHandler)
 
-		taskHandler := handlers.NewTaskHandler(ctx, a.config, a.services.task)
-		handlers.SetTaskRoutes(v1Router, taskHandler)
+		taskHandler := handlersV1.NewTaskHandler(ctx, a.config, a.services.task)
+		handlersV1.SetTaskRoutes(v1Router, taskHandler)
 
 		v1Router.PathPrefix("/swagger").HandlerFunc(httpSwagger.WrapHandler)
 

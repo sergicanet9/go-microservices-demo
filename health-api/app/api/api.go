@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/sergicanet9/go-microservices-demo/health-api/app/handlers"
+	handlersV1 "github.com/sergicanet9/go-microservices-demo/health-api/app/handlers/v1"
 	"github.com/sergicanet9/go-microservices-demo/health-api/config"
 	"github.com/sergicanet9/go-microservices-demo/health-api/core/ports"
 	"github.com/sergicanet9/go-microservices-demo/health-api/core/services"
@@ -41,8 +41,8 @@ func (a *api) RunHTTP(ctx context.Context, cancel context.CancelFunc) func() err
 
 		v1Router := router.PathPrefix("/health-api/v1").Subrouter()
 
-		healthHandler := handlers.NewHealthHandler(ctx, a.config, a.services.health)
-		handlers.SetHealthRoutes(v1Router, healthHandler)
+		healthHandler := handlersV1.NewHealthHandler(ctx, a.config, a.services.health)
+		handlersV1.SetHealthRoutes(v1Router, healthHandler)
 
 		v1Router.PathPrefix("/swagger").HandlerFunc(httpSwagger.WrapHandler)
 
