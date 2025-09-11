@@ -14,7 +14,7 @@ type TaskRepository interface {
 
 // TaskService interface
 type TaskService interface {
-	Create(ctx context.Context, token string, task models.CreateTaskReq) (models.CreateTaskResp, error)
-	GetByUserID(ctx context.Context, token string) ([]models.GetTaskResp, error)
-	Delete(ctx context.Context, token, taskID string) error
+	Create(ctx context.Context, userID string, task models.CreateTaskReq, token string) (models.CreateTaskResp, error)
+	GetByUserID(ctx context.Context, userID string) ([]models.GetTaskResp, error)
+	Delete(ctx context.Context, userID, taskID string) error
 }

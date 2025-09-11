@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	userManagementClient "github.com/sergicanet9/go-microservices-demo/common/clients/usermanagementapi/v1"
 	handlersV1 "github.com/sergicanet9/go-microservices-demo/task-manager-api/app/handlers/v1"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/config"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/ports"
@@ -40,7 +41,12 @@ func New(ctx context.Context, cfg config.Config) (a api) {
 		observability.Logger().Fatal(err)
 	}
 
-	a.services.task = services.NewTaskService(a.config, taskRepo)
+	userManagementClient, err := userManagementClient.NewGRPCClient(ctx, cfg.UserManagementTarget)
+	if err != nil {
+		observability.Logger().Fatal(err)
+	}
+
+	a.services.task = services.NewTaskService(a.config, taskRepo, userManagementClient)
 
 	return a
 }

@@ -71,7 +71,7 @@ func (t *taskHandler) createTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createTaskResp, err := t.svc.Create(ctx, userID, createTaskReq)
+	createTaskResp, err := t.svc.Create(ctx, userID, createTaskReq, r.Header.Get("Authorization"))
 	if err != nil {
 		utils.ErrorResponse(w, err)
 		return

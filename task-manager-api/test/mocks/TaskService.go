@@ -14,9 +14,9 @@ type TaskService struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: ctx, userID, task
-func (_m *TaskService) Create(ctx context.Context, userID string, task models.CreateTaskReq) (models.CreateTaskResp, error) {
-	ret := _m.Called(ctx, userID, task)
+// Create provides a mock function with given fields: ctx, userID, task, token
+func (_m *TaskService) Create(ctx context.Context, userID string, task models.CreateTaskReq, token string) (models.CreateTaskResp, error) {
+	ret := _m.Called(ctx, userID, task, token)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
@@ -24,17 +24,17 @@ func (_m *TaskService) Create(ctx context.Context, userID string, task models.Cr
 
 	var r0 models.CreateTaskResp
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, models.CreateTaskReq) (models.CreateTaskResp, error)); ok {
-		return rf(ctx, userID, task)
+	if rf, ok := ret.Get(0).(func(context.Context, string, models.CreateTaskReq, string) (models.CreateTaskResp, error)); ok {
+		return rf(ctx, userID, task, token)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, models.CreateTaskReq) models.CreateTaskResp); ok {
-		r0 = rf(ctx, userID, task)
+	if rf, ok := ret.Get(0).(func(context.Context, string, models.CreateTaskReq, string) models.CreateTaskResp); ok {
+		r0 = rf(ctx, userID, task, token)
 	} else {
 		r0 = ret.Get(0).(models.CreateTaskResp)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string, models.CreateTaskReq) error); ok {
-		r1 = rf(ctx, userID, task)
+	if rf, ok := ret.Get(1).(func(context.Context, string, models.CreateTaskReq, string) error); ok {
+		r1 = rf(ctx, userID, task, token)
 	} else {
 		r1 = ret.Error(1)
 	}

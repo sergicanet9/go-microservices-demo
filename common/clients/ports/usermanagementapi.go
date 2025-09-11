@@ -1,10 +1,12 @@
 package ports
 
-import "github.com/sergicanet9/go-microservices-demo/common/proto/usermanagementapi/v1/gen/go/pb"
+import (
+	"context"
+)
 
-// UserManagementAPIV1GRPCClient interface for a User Management API v1 gRPC Client
-type UserManagementAPIV1GRPCClient interface {
+// UserManagementV1GRPCClient interface for a User Management API v1 gRPC Client
+type UserManagementV1GRPCClient interface {
 	Close() error
-	User() pb.UserServiceClient
-	Health() pb.HealthServiceClient
+	Health(ctx context.Context) error
+	Exists(ctx context.Context, token, userID string) (bool, error)
 }

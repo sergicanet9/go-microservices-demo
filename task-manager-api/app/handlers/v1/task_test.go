@@ -30,7 +30,7 @@ func TestCreateTask_Ok(t *testing.T) {
 
 	taskService := mocks.NewTaskService(t)
 	expectedResp := models.CreateTaskResp{ID: "new-task-id"}
-	taskService.On(testutils.FunctionName(t, ports.TaskService.Create), mock.Anything, mock.Anything, mock.Anything).Return(expectedResp, nil).Once()
+	taskService.On(testutils.FunctionName(t, ports.TaskService.Create), mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(expectedResp, nil).Once()
 
 	cfg := config.Config{}
 	cfg.JWTSecret = "test-secret"
@@ -83,7 +83,7 @@ func TestCreateTask_ServiceError(t *testing.T) {
 	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiYXV0aG9yaXplZCI6dHJ1ZSwidXNlcl9pZCI6IjFkNjBiMzQ3LTViMTUtNGE2Ni1iMzg2LTcyMTY2MzNhZWQ4ZCJ9.nwR6X3UNZNeHxYM4WBGoz7tOdS63lY7Hfu2VVex4HvY"
 
 	taskService := mocks.NewTaskService(t)
-	taskService.On(testutils.FunctionName(t, ports.TaskService.Create), mock.Anything, mock.Anything, mock.Anything).Return(models.CreateTaskResp{}, errors.New("service failure")).Once()
+	taskService.On(testutils.FunctionName(t, ports.TaskService.Create), mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(models.CreateTaskResp{}, errors.New("service failure")).Once()
 
 	cfg := config.Config{}
 	cfg.JWTSecret = "test-secret"

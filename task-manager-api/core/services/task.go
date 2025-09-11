@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	commonPorts "github.com/sergicanet9/go-microservices-demo/common/clients/ports"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/config"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/entities"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/models"
@@ -15,21 +16,31 @@ import (
 
 // taskService adapter of an task service
 type taskService struct {
-	config     config.Config
-	repository ports.TaskRepository
+	config               config.Config
+	repository           ports.TaskRepository
+	userManagementClient commonPorts.UserManagementV1GRPCClient
 }
 
 // NewTaskService creates a new task service
-func NewTaskService(cfg config.Config, repo ports.TaskRepository) ports.TaskService {
+func NewTaskService(cfg config.Config, repo ports.TaskRepository, userManagementClient commonPorts.UserManagementV1GRPCClient) ports.TaskService {
 	return &taskService{
-		config:     cfg,
-		repository: repo,
+		config:               cfg,
+		repository:           repo,
+		userManagementClient: userManagementClient,
 	}
 }
 
 // Create task
-func (t *taskService) Create(ctx context.Context, userID string, task models.CreateTaskReq) (resp models.CreateTaskResp, err error) {
-	// TODO check userID exists in user management api?
+func (t *taskService) Create(ctx context.Context, userID string, task models.CreateTaskReq, token string) (resp models.CreateTaskResp, err error) {
+
+	exists, err := t.userManagementClient.Exists(ctx, token, userID)
+	if err != nil {
+		return
+	}
+	if !exists {
+		return resp, wrappers.NewNonExistentErr(fmt.Errorf("UserID %s not found", userID))
+	}
+
 	entity := entities.Task(task)
 	entity.UserID = userID
 	entity.CreatedAt = time.Now().UTC()

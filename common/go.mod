@@ -6,7 +6,7 @@ replace github.com/sergicanet9/go-microservices-demo/task-manager-api => ../task
 
 require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.2
-	github.com/sergicanet9/go-microservices-demo/task-manager-api v0.0.0-20250911095929-947944135f1f
+	github.com/sergicanet9/go-microservices-demo/task-manager-api v0.0.0
 	github.com/stretchr/testify v1.11.1
 	google.golang.org/genproto/googleapis/api v0.0.0-20250908214217-97024824d090
 	google.golang.org/grpc v1.75.1

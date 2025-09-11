@@ -13,13 +13,13 @@ services:
     build:
       args:
         version: $VERSION
-      context: ./health-api
-      dockerfile: build/docker/Dockerfile
+      context: .
+      dockerfile: health-api/build/docker/Dockerfile
     environment:
       - env=$ENV
       - hp=$TASK_MANAGER_API_CONTAINER_HTTP_PORT
       - tasksurl=$TASK_MANAGER_API_BASE_URL
-      - usersurl=$USER_MANAGEMENT_API_BASE_URL
+      - usersurl=$USER_MANAGEMENT_API_BASE_URL # TODO remove from env when moved to grpc
     depends_on:
       - task-manager-api
       - user-management-api
@@ -31,13 +31,14 @@ services:
     build:
       args:
         version: $VERSION
-      context: ./task-manager-api
-      dockerfile: build/docker/Dockerfile
+      context: .
+      dockerfile: task-manager-api/build/docker/Dockerfile
     environment:
       - env=$ENV
       - hp=$TASK_MANAGER_API_CONTAINER_HTTP_PORT
       - dsn=$TASK_MANAGER_API_DSN
       - jsecret=$JWT_SECRET
+      - usersgrpc=$USER_MANAGEMENT_API_GRPC_TARGET
     depends_on:
       - mongodb
     ports:

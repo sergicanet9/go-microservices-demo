@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	commonPorts "github.com/sergicanet9/go-microservices-demo/common/clients/ports"
+	commonMocks "github.com/sergicanet9/go-microservices-demo/common/test/mocks"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/config"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/entities"
 	"github.com/sergicanet9/go-microservices-demo/task-manager-api/core/models"
@@ -31,19 +33,49 @@ func TestCreate_Ok(t *testing.T) {
 	}
 
 	taskRepositoryMock := mocks.NewTaskRepository(t)
-	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Create), context.Background(), mock.AnythingOfType("entities.Task")).Return(expectedResponse.ID, nil).Once()
+	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Create), mock.Anything, mock.AnythingOfType("entities.Task")).Return(expectedResponse.ID, nil).Once()
+
+	userManagementClientMock := commonMocks.NewUserManagementV1GRPCClient(t)
+	userManagementClientMock.On(testutils.FunctionName(t, commonPorts.UserManagementV1GRPCClient.Exists), mock.Anything, mock.Anything, mock.Anything).Return(true, nil).Once()
 
 	service := &taskService{
-		config:     config.Config{},
-		repository: taskRepositoryMock,
+		config:               config.Config{},
+		repository:           taskRepositoryMock,
+		userManagementClient: userManagementClientMock,
 	}
 
 	// Act
-	resp, err := service.Create(context.Background(), "user-123", req)
+	resp, err := service.Create(context.Background(), "user-123", req, "Bearer test-token")
 
 	// Assert
 	assert.Nil(t, err)
 	assert.Equal(t, expectedResponse, resp)
+}
+
+// TestCreate_UserManagementClientError checks that Create returns an error when the user management client fails
+func TestCreate_UserManagementClientError(t *testing.T) {
+	// Arrange
+	req := models.CreateTaskReq{
+		Title:       "test-title",
+		Description: "test-description",
+	}
+
+	expectedError := "client-error"
+
+	userManagementClientMock := commonMocks.NewUserManagementV1GRPCClient(t)
+	userManagementClientMock.On(testutils.FunctionName(t, commonPorts.UserManagementV1GRPCClient.Exists), mock.Anything, mock.Anything, mock.Anything).Return(false, errors.New(expectedError)).Once()
+
+	service := &taskService{
+		config:               config.Config{},
+		userManagementClient: userManagementClientMock,
+	}
+
+	// Act
+	_, err := service.Create(context.Background(), "user-123", req, "Bearer test-token")
+
+	// Assert
+	assert.NotEmpty(t, err)
+	assert.Equal(t, expectedError, err.Error())
 }
 
 // TestCreate_RepositoryError checks that Create returns an error when the repository fails
@@ -57,15 +89,19 @@ func TestCreate_RepositoryError(t *testing.T) {
 	expectedError := "repository-error"
 
 	taskRepositoryMock := mocks.NewTaskRepository(t)
-	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Create), context.Background(), mock.AnythingOfType("entities.Task")).Return("", errors.New(expectedError)).Once()
+	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Create), mock.Anything, mock.AnythingOfType("entities.Task")).Return("", errors.New(expectedError)).Once()
+
+	userManagementClientMock := commonMocks.NewUserManagementV1GRPCClient(t)
+	userManagementClientMock.On(testutils.FunctionName(t, commonPorts.UserManagementV1GRPCClient.Exists), mock.Anything, mock.Anything, mock.Anything).Return(true, nil).Once()
 
 	service := &taskService{
-		config:     config.Config{},
-		repository: taskRepositoryMock,
+		config:               config.Config{},
+		repository:           taskRepositoryMock,
+		userManagementClient: userManagementClientMock,
 	}
 
 	// Act
-	_, err := service.Create(context.Background(), "user-123", req)
+	_, err := service.Create(context.Background(), "user-123", req, "Bearer test-token")
 
 	// Assert
 	assert.NotEmpty(t, err)
@@ -101,7 +137,7 @@ func TestGetByUserID_Ok(t *testing.T) {
 	}
 
 	taskRepositoryMock := mocks.NewTaskRepository(t)
-	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Get), context.Background(), mock.Anything, mock.Anything, mock.Anything).Return(repoResponse, nil).Once()
+	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Get), mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(repoResponse, nil).Once()
 
 	service := &taskService{
 		config:     config.Config{},
@@ -120,7 +156,7 @@ func TestGetByUserID_Ok(t *testing.T) {
 func TestGetByUserID_NoResourcesFound(t *testing.T) {
 	// Arrange
 	taskRepositoryMock := mocks.NewTaskRepository(t)
-	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Get), context.Background(), mock.Anything, mock.Anything, mock.Anything).Return(nil, wrappers.NonExistentErr).Once()
+	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Get), mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil, wrappers.NonExistentErr).Once()
 
 	service := &taskService{
 		config:     config.Config{},
@@ -141,7 +177,7 @@ func TestGetByUserID_RepositoryError(t *testing.T) {
 	expectedError := "repository-error"
 
 	taskRepositoryMock := mocks.NewTaskRepository(t)
-	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Get), context.Background(), mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New(expectedError)).Once()
+	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Get), mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New(expectedError)).Once()
 
 	service := &taskService{
 		config:     config.Config{},
@@ -167,8 +203,8 @@ func TestDelete_Ok(t *testing.T) {
 		CreatedAt:   time.Now(),
 	}
 	taskRepositoryMock := mocks.NewTaskRepository(t)
-	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.GetByID), context.Background(), mock.Anything).Return(&task, nil).Once()
-	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Delete), context.Background(), mock.Anything).Return(nil).Once()
+	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.GetByID), mock.Anything, mock.Anything).Return(&task, nil).Once()
+	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Delete), mock.Anything, mock.Anything).Return(nil).Once()
 
 	service := &taskService{
 		config:     config.Config{},
@@ -192,7 +228,7 @@ func TestDelete_NotFound(t *testing.T) {
 	expectedError := fmt.Sprintf("TaskID %s not found", task.ID)
 
 	taskRepositoryMock := mocks.NewTaskRepository(t)
-	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.GetByID), context.Background(), mock.Anything).Return(nil, wrappers.NonExistentErr).Once()
+	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.GetByID), mock.Anything, mock.Anything).Return(nil, wrappers.NonExistentErr).Once()
 
 	service := &taskService{
 		config:     config.Config{},
@@ -219,7 +255,7 @@ func TestDelete_InvalidUser(t *testing.T) {
 	expectedError := fmt.Sprintf("UserID %s not allowed to delete TaskID %s", wrongUserID, task.ID)
 
 	taskRepositoryMock := mocks.NewTaskRepository(t)
-	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.GetByID), context.Background(), mock.Anything).Return(&task, nil).Once()
+	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.GetByID), mock.Anything, mock.Anything).Return(&task, nil).Once()
 
 	service := &taskService{
 		config:     config.Config{},
@@ -248,8 +284,8 @@ func TestDelete_RepositoryError(t *testing.T) {
 	expectedError := "repository-error"
 
 	taskRepositoryMock := mocks.NewTaskRepository(t)
-	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.GetByID), context.Background(), mock.Anything).Return(&task, nil).Once()
-	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Delete), context.Background(), mock.Anything).Return(errors.New(expectedError)).Once()
+	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.GetByID), mock.Anything, mock.Anything).Return(&task, nil).Once()
+	taskRepositoryMock.On(testutils.FunctionName(t, ports.TaskRepository.Delete), mock.Anything, mock.Anything).Return(errors.New(expectedError)).Once()
 
 	service := &taskService{
 		config:     config.Config{},

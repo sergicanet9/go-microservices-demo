@@ -17,7 +17,7 @@ type httpClient struct {
 }
 
 // NewHTTPClient creates a new HTTP client for Task Manager API v1
-func NewHTTPClient(baseURL string) ports.TaskManagerAPIV1HTTPClient {
+func NewHTTPClient(baseURL string) ports.TaskManagerV1HTTPClient {
 	return &httpClient{
 		baseURL: baseURL,
 		client:  &http.Client{},
@@ -44,6 +44,8 @@ func (c *httpClient) Health(ctx context.Context) (err error) {
 
 	return
 }
+
+// TODO unused - remove? and also tests...
 
 // CreateTask call
 func (c *httpClient) CreateTask(ctx context.Context, task models.CreateTaskReq) (resp models.CreateTaskResp, err error) {

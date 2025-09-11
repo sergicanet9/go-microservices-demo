@@ -2,9 +2,11 @@ FROM golang:alpine AS builder
 
 WORKDIR /opt/go-microservices-demo/health-api
 
-COPY go.mod go.sum ./
+COPY ./common /opt/go-microservices-demo/common
+
+COPY ./health-api/go.mod ./health-api/go.sum ./
 RUN go mod download
-COPY . .
+COPY ./health-api .
 
 RUN go build -o bin/main cmd/main.go
 

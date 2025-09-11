@@ -14,9 +14,14 @@ type Config struct {
 	HTTPPort    int
 	DSN         string
 	JWTSecret   string
+	externalURLs
 
 	// set in json config files
 	config
+}
+
+type externalURLs struct {
+	UserManagementTarget string
 }
 
 type config struct {
@@ -26,13 +31,14 @@ type config struct {
 // ReadConfig from the project´s JSON config files.
 // Default values are specified in the default configuration file, config/config.json
 // and can be overrided with values specified in the environment configuration files, config/config.{env}.json.
-func ReadConfig(version, env string, httpPort int, dsn, jwtSecret, configPath string) (Config, error) {
+func ReadConfig(version, env string, httpPort int, dsn, jwtSecret, userManagementTarget, configPath string) (Config, error) {
 	var c Config
 	c.Version = version
 	c.Environment = env
 	c.HTTPPort = httpPort
 	c.DSN = dsn
 	c.JWTSecret = jwtSecret
+	c.UserManagementTarget = userManagementTarget
 
 	var cfg config
 
