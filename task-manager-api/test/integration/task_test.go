@@ -72,6 +72,11 @@ func TestCreateTask_Ok(t *testing.T) {
 func TestGetTasks_Ok(t *testing.T) {
 	// Arrange
 	cfg := New(t)
+	testTask := getNewTestTask()
+	err := insertTask(&testTask, cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// Act
 	url := fmt.Sprintf("http://:%d/task-manager-api/v1/tasks", cfg.HTTPPort)
