@@ -28,12 +28,10 @@ up:
 	@echo ""
 down:
 	docker-compose down
-
 all-test-unit:
 	$(MAKE) -C health-api test-unit & \
 	$(MAKE) -C task-manager-api test-unit & \
 	wait
-
 all-test-integration:
 	$(MAKE) -C health-api test-integration & \
 	$(MAKE) -C task-manager-api test-integration & \
