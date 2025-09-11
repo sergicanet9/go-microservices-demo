@@ -29,6 +29,7 @@ up:
 down:
 	docker-compose down
 all-test-unit:
+	$(MAKE) -C common test-unit & \
 	$(MAKE) -C health-api test-unit & \
 	$(MAKE) -C task-manager-api test-unit & \
 	wait
