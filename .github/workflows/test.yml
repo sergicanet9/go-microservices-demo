@@ -17,7 +17,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
+      - name: Start services
+        run: make up
       - name: Run all integration tests
-        run: |
-          make up
-          make test-integration
+        run: make test-integration
+      - name: Wait for services to be ready
+        run: sleep 10
+      - name: Stop services
+        if: always()
+        run: make down

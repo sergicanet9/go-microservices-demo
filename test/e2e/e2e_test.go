@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -26,49 +26,13 @@ var (
 	client    = &http.Client{Timeout: 6 * time.Second}
 )
 
-func TestMain(m *testing.M) {
-	fmt.Println("Checking if services are up...")
-	if !checkServicesReady() {
-		fmt.Fprintf(os.Stderr, "Error: services are not running. Run 'make up' first.")
-		os.Exit(1)
-	}
-
-	code := m.Run()
-
-	os.Exit(code)
-}
-
-func checkServicesReady() bool {
-	services := map[string]string{
-		"health-api":          fmt.Sprintf("%s/health", healthAPIAddr),
-		"task-manager-api":    fmt.Sprintf("%s/health", taskManagerAPIAddr),
-		"user-management-api": fmt.Sprintf("%s/health", userManagementAPIAddr),
-	}
-
-	allReady := true
-	for name, url := range services {
-		for i := 0; i < 10; i++ {
-			resp, err := http.Get(url)
-			if err == nil && resp.StatusCode == http.StatusOK {
-				fmt.Printf("%s is ready\n", name)
-				time.Sleep(1 * time.Second)
-				break
-			}
-			fmt.Printf("Waiting for %s at %s... (attempt %d)\n", name, url, i+1)
-			time.Sleep(1 * time.Second) // Reduced sleep time
-		}
-		resp, err := http.Get(url)
-		if err != nil || resp.StatusCode != http.StatusOK {
-			fmt.Printf("Error: %s is not running or not responding.\n", name)
-			allReady = false
-		}
-	}
-	return allReady
-}
-
 // TestE2EWorkflow runs the entire end-to-end flow across health-api, task-manager-api and user-management-api.
 func TestE2EWorkflow(t *testing.T) {
-	t.Run("Health API check", testHealthCheck)
+	ok := t.Run("Health API check", testHealthCheck)
+	if !ok {
+		t.Fatalf("Services are not healthy. Run 'make up' first.")
+	}
+
 	t.Run("Create a user", testCreateUser)
 	t.Run("Login with the user", testLoginUser)
 	t.Run("Get user by ID", testGetUserByID)
@@ -81,6 +45,7 @@ func TestE2EWorkflow(t *testing.T) {
 func testHealthCheck(t *testing.T) {
 	resp, err := client.Get(healthAPIAddr + "/health")
 	assert.Nil(t, err)
+	require.NotNil(t, resp)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
