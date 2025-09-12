@@ -52,39 +52,6 @@ graph TD
     UM -->|MongoDB| MDB-UM
     TM -->|MongoDB| MDB-TM
 ```
-```mermaid
-graph LR
-    subgraph Architecture
-        subgraph "Gateway"
-            NG[Nginx]
-        end
-
-        subgraph "Services"
-            UM["user-management-api (gRPC + HTTP)"]
-            TM["task-manager-api (HTTP)"]
-            HA["health-api (HTTP)"]
-        end
-
-        subgraph "Databases"
-            MDB-UM[MongoDB]
-            MDB-TM[MongoDB]
-        end
-    end
-
-    %% HTTP traffic through Nginx
-    NG -->|HTTP| UM
-    NG -->|HTTP| TM
-    NG -->|HTTP| HA
-
-    %% Internal communications
-    TM -->|gRPC| UM
-    HA -->|gRPC| UM
-    HA -->|HTTP| TM
-
-    %% Database connections
-    UM -->|MongoDB| MDB-UM
-    TM -->|MongoDB| MDB-TM
-```
 
 ## 🏁 Getting Started
 ### Run it with Docker
