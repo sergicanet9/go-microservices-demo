@@ -8,6 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
+      - uses: docker/setup-compose-action@v1
       - name: Run all unit tests
         run: make all-test-unit
 
@@ -19,8 +20,8 @@ jobs:
       - uses: actions/setup-go@v3
       - name: Start services
         run: make up
-      - name: Run all integration tests
-        run: make test-integration
+      - name: Run e2e tests
+        run: make test-e2e
       - name: Wait for services to be ready
         run: sleep 10
       - name: Stop services
