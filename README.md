@@ -8,7 +8,7 @@ A lightweight **Go microservices** demo showcasing gRPC and HTTP communication, 
 | task-manager-api    | REST API        | Docker Container | Manages tasks for the logged in user. Authenticates user tokens and interacts with user-management-api via gRPC.                                                       |
 | health-api          | REST API        | Docker Container | Performs a complete system health check by calling the health endpoints in user-management-api by gRPC and task-manager-api by HTTP.                                   |
 | MongoDB             | Database        | Docker Container | Provides two different MongoDB databases to store users and tasks.                                                                                                     |
-| Nginx               | HTTP Gateway    | Docker Container | Acts as an entrypoint for the distributed system, routing the HTTP traffic to the internal APIs.                                                                       |
+| Nginx               | API Gateway    | Docker Container | Acts as an entrypoint for the distributed system, routing the HTTP traffic to the internal APIs.                                                                       |
 
 ## ⚙️ Other Components
 | Component     | Role        | Integration        | Description                                                                                                                                             |
@@ -29,9 +29,9 @@ graph TD
     style HA fill:#ADD8E6,stroke:#000,stroke-width:1px
     style MDB-UM fill:#90EE90,stroke:#000,stroke-width:1px
     style MDB-TM fill:#90EE90,stroke:#000,stroke-width:1px
-    
+
     subgraph  
-        subgraph "Gateway"
+        subgraph "API Gateway"
             NG[Nginx]
         end
 
@@ -70,7 +70,7 @@ make up
 ```
 This command launches the Docker Images described above.
 <br />
-Check the console output for Swagger UI, gRPC UIs and HTTP command examples, all routed through the Nginx Gateway.
+Check the console output for Swagger UI, gRPC UIs and HTTP command examples, all routed through the Nginx API Gateway.
 <br/>
 The mongo-express URL is also displayed.
 
@@ -87,7 +87,7 @@ NOTES:
 - Configuration adjustments may be required to ensure full system integration while debugging one API locally.
 
 ## 📦 API Endpoints
-All the APIs are exposed through the Nginx Gateway.
+All the APIs are exposed through the Nginx API Gateway.
 
 ### health-api
 | HTTP Endpoint               | Description                                   |
