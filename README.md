@@ -34,8 +34,8 @@ graph TD
         end
 
         subgraph "Databases"
-            MDB-UM[UsersDB]
-            MDB-TM[TasksDB]
+            MDB-UM[MongoDB]
+            MDB-TM[MongoDB]
         end
     end
 
@@ -50,8 +50,8 @@ graph TD
     HA -->|HTTP| TM
 
     %% Database connections
-    UM -->|MongoDB| MDB-UM
-    TM -->|MongoDB| MDB-TM
+    UM --> MDB-UM
+    TM --> MDB-TM
 ```
 
 ## ⚙️ Other Components
