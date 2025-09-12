@@ -1,70 +1,148 @@
 # go-microservices-demo
 A lightweight **Go microservices** demo showcasing gRPC and HTTP communication, built on top of the [scv-go-tools](https://github.com/sergicanet9/scv-go-tools) library and using [go-hexagonal-api](https://github.com/sergicanet9/go-hexagonal-api) as a backend service.
 
-<!-- TODO draft -->
-<!-- ## 🚀 Services
-### 1. go-hexagonal-api
-- gRPC + HTTP API for user management.
-- Exposes endpoints via gRPC and automatically via HTTP (gRPC-Gateway).
-- Runs in its own Docker container.
+## 🧩 System Components
+| Component           | Role            |  Integration     | Description                                                                                                                                                            |
+| ------------------- | --------------- | ---------------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| user-management-api | gRPC + REST API | Docker Container | Provides user management and JWT authentication + authorization. Integrated via Docker Image from [go-hexagonal-api](https://github.com/sergicanet9/go-hexagonal-api). |
+| task-manager-api    | REST API        | Docker Container | Manages tasks for the logged in user. Authenticates user tokens and interacts with user-management-api via gRPC.                                                       |
+| health-api          | REST API        | Docker Container | Performs a complete system health check by calling the health endpoints in user-management-api by gRPC and task-manager-api by HTTP.                                   |
+| MongoDB             | Database        | Docker Container | Provides two different MongoDB databases to store users and tasks.                                                                                                     |
+| Nginx               | HTTP Gateway    | Docker Container | Acts as an entrypoint for the distributed system, routing the HTTP traffic to the internal APIs.                                                                       |
 
-### 2. Task Tracker
-- HTTP API for managing tasks per user.
-- Communicates internally with `go-hexagonal-api` via gRPC for user authentication.
-- Endpoints:
-  - `GET /tasks` – List tasks for the authenticated user.
-  - `POST /tasks` – Create a new task for the authenticated user.
-  - `DELETE /tasks/{id}` – Delete a task.
+## ⚙️ Other Components
+| Component     | Role        | Integration        | Description                                                                                                                                             |
+| ------------- | ----------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| common        | Shared code | Internal Go Module | HTTP and gRPC clients for inter-service communication.                                                                                                  |
+| e2e tests     | Testing     | Internal Go Module | End-to-end tests validating interactions across the system components.                                                                                  |
+| scv-go-tools  | Toolkit     | External Go Module | Toolkit for building REST and gRPC APIs. Integrated via external Go module from [scv-go-tools](https://github.com/sergicanet9/scv-go-tools).            |
+| mongo-express | Utility     | Docker Container   | Web interface for MongoDB.                                                                                                                              |
+
+## 📈 Architecture Diagram
+```mermaid
+graph TD
+    subgraph Architecture
+        subgraph "Gateway"
+            NG[Nginx]
+        end
+
+        subgraph "Services"
+            UM["user-management-api (gRPC + HTTP)"]
+            TM["task-manager-api (HTTP)"]
+            HA["health-api (HTTP)"]
+        end
+
+        subgraph "Databases"
+            MDB-UM[MongoDB]
+            MDB-TM[MongoDB]
+        end
+    end
+
+    %% HTTP traffic through Nginx
+    NG -->|HTTP| UM
+    NG -->|HTTP| TM
+    NG -->|HTTP| HA
+
+    %% Internal communications
+    TM -->|gRPC| UM
+    HA -->|gRPC| UM
+    HA -->|HTTP| TM
+
+    %% Database connections
+    UM -->|MongoDB| MDB-UM
+    TM -->|MongoDB| MDB-TM
+```
+```mermaid
+graph LR
+    subgraph Architecture
+        subgraph "Gateway"
+            NG[Nginx]
+        end
+
+        subgraph "Services"
+            UM["user-management-api (gRPC + HTTP)"]
+            TM["task-manager-api (HTTP)"]
+            HA["health-api (HTTP)"]
+        end
+
+        subgraph "Databases"
+            MDB-UM[MongoDB]
+            MDB-TM[MongoDB]
+        end
+    end
+
+    %% HTTP traffic through Nginx
+    NG -->|HTTP| UM
+    NG -->|HTTP| TM
+    NG -->|HTTP| HA
+
+    %% Internal communications
+    TM -->|gRPC| UM
+    HA -->|gRPC| UM
+    HA -->|HTTP| TM
+
+    %% Database connections
+    UM -->|MongoDB| MDB-UM
+    TM -->|MongoDB| MDB-TM
+```
 
 ## 🏁 Getting Started
-### Run with Docker Compose
+### Run it with Docker
+To start the entire application stack using Docker Compose, run:
 ```
 make up
 ```
-This launches two containers:
-go-hexagonal-api
-task-tracker
+This command launches the Docker Images described above.
+<br />
+Check the console output for Swagger UI, gRPC UIs and HTTP command examples, all routed through the Nginx Gateway.
+<br/>
+The mongo-express URL is also displayed.
 
-## Access the Services
-- **Swagger UI for go-hexagonal-api**: [http://localhost:8082/swagger/index.html](http://localhost:8082/swagger/index.html)  
-- **gRPC UI for go-hexagonal-api**: [http://localhost:8082/grpcui/](http://localhost:8082/grpcui/)  
-- **Task Tracker HTTP API**: [http://localhost:8085](http://localhost:8085)
-
-## ⚙️ Authentication
-Both services require a valid JWT token for user-specific operations.  
-The Task Tracker service validates the token by calling `go-hexagonal-api` internally via gRPC.
-
-## 🛠️ Development
-- **Task Tracker** service is located in the `task-tracker/` folder.  
-- **go-hexagonal-api** is pulled as a Docker image from your local build or a registry.
-
-### Build & Run Task Tracker
+To stop and remove all containers, run:
 ```
-cd task-tracker
-go build -o task-tracker ./cmd
-./task-tracker --port=8085 --hexagonal-api-grpc=go-hexagonal-api:50051
+make down
 ```
 
-## Access the Services
-- **Swagger UI for go-hexagonal-api**: [http://localhost:8082/swagger/index.html](http://localhost:8082/swagger/index.html)  
-- **gRPC UI for go-hexagonal-api**: [http://localhost:8082/grpcui/](http://localhost:8082/grpcui/)  
-- **Task Tracker HTTP API**: [http://localhost:8085](http://localhost:8085)
+### Debug it with VS Code
+The project includes debugging profiles in [launch.json](https://github.com/sergicanet9/go-microservices-demo/blob/main/.vscode/launch.json) for both task-manager-api and health-api. Simply select the desired configuration in the VS Code debugger and run it.
 
+NOTES:
+- The database and the other APIs need to be up and running (run `make up`).
+- Configuration adjustments may be required to ensure full system integration while debugging one API locally.
 
-## ⚙️ Authentication
-Both services require a valid JWT token for user-specific operations.  
-The Task Tracker service validates the token by calling `go-hexagonal-api` internally via gRPC.
+## 📦 API Endpoints
+All the APIs are exposed through the Nginx Gateway.
 
-## 🛠️ Development
-- **Task Tracker** service is located in the `task-tracker/` folder.  
-- **go-hexagonal-api** is pulled as a Docker image from your local build or a registry.
+### health-api
+| HTTP Endpoint               | Description                                   |
+| --------------------------- | --------------------------------------------- |
+| GET `/health-api/v1/health` | Returns the health status of all system APIs. |
 
-## Build & Run Task Tracker
-```bash
-cd task-tracker
-go build -o task-tracker ./cmd
-./task-tracker --port=8085 --hexagonal-api-grpc=go-hexagonal-api:50051
+### task-manager-api
+These endpoints require a valid JWT issued by User Management API, formatted as `Bearer {token}` and included as `Authorization` header.
+| HTTP Endpoint                            | Description                                    |
+| ---------------------------------------- | ---------------------------------------------- |
+| GET `/task-manager-api/v1/tasks`         | Gets all the tasks for the authenticated user. |
+| POST `/task-manager-api/v1/tasks`        | Creates a new task for the authenticated user. |
+| DELETE `/task-manager-api/v1/tasks/{id}` | Deletes a task for the authenticated user.     |
+
+### user-management-api
+Endpoints described in [go-hexagonal-api Endpoints](https://github.com/sergicanet9/go-hexagonal-api?tab=readme-ov-file#-api-endpoints).
+
+## ✅ Testing
+### Run all unit tests
 ```
+make all-test-unit
+```
+
+### Run End-to-End tests
+```
+make test-e2e
+```
+<br />
+
+ NOTES:
+- The entire application stack needs to be up and running (run `make up`).
 
 ## 📚 References
 * [scv-go-tools](https://github.com/sergicanet9/scv-go-tools)
@@ -74,4 +152,4 @@ go build -o task-tracker ./cmd
 Sergi Canet Vela
 
 ## ⚖️ License
-This project is licensed under the terms of the MIT license. -->
+This project is licensed under the terms of the MIT license.
