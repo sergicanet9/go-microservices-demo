@@ -1,5 +1,5 @@
 name: test
-on: 
+on:
   workflow_call:
 
 jobs:
@@ -31,10 +31,18 @@ jobs:
             echo "status code: $http_status (attempt $i/30)"
             sleep 5
           done
+          if [ "$http_status" -ne 200 ]; then
+            echo "Health check failed after 30 attempts."
+            exit 1
+          fi
 
       - name: Run e2e tests
         run: make test-e2e
 
+      - name: Get logs if all healthcheck attempts failed
+        if: failure()
+        run: dockercompose logs
+        
       - name: Stop services
         if: always()
         run: |
