@@ -1,4 +1,6 @@
 # go-microservices-demo
+![CI](https://github.com/sergicanet9/go-microservices-demo/actions/workflows/ci.yml/badge.svg)
+
 A lightweight **Go microservices** demo showcasing gRPC and HTTP communication, built on top of the [scv-go-tools](https://github.com/sergicanet9/scv-go-tools) library and using [go-hexagonal-api](https://github.com/sergicanet9/go-hexagonal-api) as a backend service.
 
 ## 🧩 System Components
