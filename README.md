@@ -20,7 +20,16 @@ A lightweight **Go microservices** demo showcasing gRPC and HTTP communication, 
 
 ## 📈 Architecture Diagram
 ```mermaid
+%%{init: {'theme': 'neutral'}}%%
 graph TD
+    %% Styles
+    style NG fill:#87CEFA,stroke:#000,stroke-width:1px
+    style UM fill:#ADD8E6,stroke:#000,stroke-width:1px
+    style TM fill:#ADD8E6,stroke:#000,stroke-width:1px
+    style HA fill:#ADD8E6,stroke:#000,stroke-width:1px
+    style MDB-UM fill:#90EE90,stroke:#000,stroke-width:1px
+    style MDB-TM fill:#90EE90,stroke:#000,stroke-width:1px
+    
     subgraph  
         subgraph "Gateway"
             NG[Nginx]
@@ -51,13 +60,6 @@ graph TD
     %% Database connections
     UM -->|MongoDB| MDB-UM
     TM -->|MongoDB| MDB-TM
-    %% Styles
-    style NG fill:#87CEFA,stroke:#000,stroke-width:1px
-    style UM fill:#ADD8E6,stroke:#000,stroke-width:1px
-    style TM fill:#ADD8E6,stroke:#000,stroke-width:1px
-    style HA fill:#ADD8E6,stroke:#000,stroke-width:1px
-    style MDB-UM fill:#90EE90,stroke:#000,stroke-width:1px
-    style MDB-TM fill:#90EE90,stroke:#000,stroke-width:1px
 ```
 
 ## 🏁 Getting Started
