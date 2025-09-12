@@ -120,10 +120,6 @@ make test-e2e
  NOTES:
 - The entire application stack needs to be up and running (run `make up`).
 
-## 📚 References
-* [scv-go-tools](https://github.com/sergicanet9/scv-go-tools)
-* [go-hexagonal-api](https://github.com/sergicanet9/go-hexagonal-api)
-
 ## ✍️ Author
 Sergi Canet Vela
 
