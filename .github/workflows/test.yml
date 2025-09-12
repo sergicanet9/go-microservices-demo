@@ -7,11 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: arnested/go-version-action@v1
-        id: go-version
       - uses: actions/setup-go@v3
-        with:
-          go-version: ${{ steps.go-version.outputs.minimal }}
       - name: Run all unit tests
         run: make all-test-unit
 
@@ -20,10 +16,6 @@ jobs:
     needs: unit-tests
     steps:
       - uses: actions/checkout@v3
-      - uses: arnested/go-version-action@v1
-        id: go-version
       - uses: actions/setup-go@v3
-        with:
-          go-version: ${{ steps.go-version.outputs.minimal }}
       - name: Run all integration tests
         run: make test-integration
