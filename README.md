@@ -33,8 +33,8 @@ graph TD
         end
 
         subgraph "Databases"
-            MDB-UM[MongoDB]
-            MDB-TM[MongoDB]
+            MDB-UM[UsersDB]
+            MDB-TM[TasksDB]
         end
     end
 
