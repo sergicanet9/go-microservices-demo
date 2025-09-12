@@ -27,9 +27,9 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	maxAttempts := 20
+	maxAttempts := 60
 	if !servicesReady(maxAttempts) {
-		fmt.Println("Error: services are not running. Run 'make up' first.")
+		fmt.Println("Error: services are not running. Make sure to run 'make up' first.")
 		os.Exit(1)
 	}
 	os.Exit(m.Run())
