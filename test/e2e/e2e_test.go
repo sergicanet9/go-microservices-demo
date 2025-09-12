@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -26,13 +26,32 @@ var (
 	client    = &http.Client{Timeout: 6 * time.Second}
 )
 
-// TestE2EWorkflow runs the entire end-to-end flow across health-api, task-manager-api and user-management-api.
-func TestE2EWorkflow(t *testing.T) {
-	ok := t.Run("Health API check", testHealthCheck)
-	if !ok {
-		t.Fatalf("Services are not healthy. Run 'make up' first.")
+func TestMain(m *testing.M) {
+	maxAttempts := 20
+	if !servicesReady(maxAttempts) {
+		fmt.Println("Error: services are not running. Run 'make up' first.")
+		os.Exit(1)
 	}
+	os.Exit(m.Run())
+}
 
+func servicesReady(maxAttempts int) bool {
+	for i := 1; i <= maxAttempts; i++ {
+		fmt.Printf("Waiting for services to be ready... (attempt %d/%d)\n", i, maxAttempts)
+
+		resp, err := client.Get(healthAPIAddr + "/health")
+		if err == nil && resp.StatusCode == http.StatusOK {
+			fmt.Printf("services ready")
+			return true
+		}
+		time.Sleep(2 * time.Second)
+	}
+	fmt.Printf("Health check failed after %d attempts.\n", maxAttempts)
+	return false
+}
+
+// TestE2EWorkflow runs the entire end-to-end flow across task-manager-api and user-management-api
+func TestE2EWorkflow(t *testing.T) {
 	t.Run("Create a user", testCreateUser)
 	t.Run("Login with the user", testLoginUser)
 	t.Run("Get user by ID", testGetUserByID)
@@ -40,13 +59,6 @@ func TestE2EWorkflow(t *testing.T) {
 	t.Run("Get user's tasks", testGetTasks)
 	t.Run("Delete the created task", testDeleteTask)
 	t.Run("Delete the user", testDeleteUser)
-}
-
-func testHealthCheck(t *testing.T) {
-	resp, err := client.Get(healthAPIAddr + "/health")
-	assert.Nil(t, err)
-	require.NotNil(t, resp)
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
 func testCreateUser(t *testing.T) {

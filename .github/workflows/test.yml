@@ -19,28 +19,10 @@ jobs:
       - name: Start services
         run: make up
 
-      - name: Wait for services to be ready
-        run: |
-          MAX_ATTEMPTS=20
-          for i in $(seq 1 $MAX_ATTEMPTS); do
-            echo "Waiting for services to be ready... (attempt $i/$MAX_ATTEMPTS)"
-            http_status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:82/health-api/v1/health)
-            if [ "$http_status" -eq 200 ]; then
-              echo "healthcheck succesful"
-              break
-            fi
-            echo "status code: $http_status (attempt $i/$MAX_ATTEMPTS)"
-            sleep 5
-          done
-          if [ "$http_status" -ne 200 ]; then
-            echo "Health check failed after $MAX_ATTEMPTS attempts."
-            exit 1
-          fi
-
       - name: Run e2e tests
         run: make test-e2e
 
-      - name: Get logs if all healthcheck attempts failed
+      - name: Get docker compose logs if e2e tests have failed
         if: failure()
         run: docker compose logs
 
