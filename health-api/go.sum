@@ -60,8 +60,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
 github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
-github.com/sergicanet9/scv-go-tools/v4 v4.1.0 h1:AzBTfTbJ/6QClFRmOI6J8XvapgWjjIoaiypg7B4gstw=
-github.com/sergicanet9/scv-go-tools/v4 v4.1.0/go.mod h1:PJPWc9u3LZhDy8/uZwoz0hC0RnPTqok2feHSTp4byZA=
+github.com/sergicanet9/scv-go-tools/v4 v4.1.2 h1:C3jznOY0EzkHPRJJ3jywAG6wGUOxhNVIA+9UOX4GY7I=
+github.com/sergicanet9/scv-go-tools/v4 v4.1.2/go.mod h1:PJPWc9u3LZhDy8/uZwoz0hC0RnPTqok2feHSTp4byZA=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.5.2 h1:xuMeJ0Sdp5ZMRXx/aWO6RZxdr3beISkG5/G/aIRr3pY=
 github.com/stretchr/objx v0.5.2/go.mod h1:FRsXN1f5AsAjCGJKqEizvkpNtU+EGNCLh3NxZ/8L+MA=

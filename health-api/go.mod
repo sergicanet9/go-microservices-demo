@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/sergicanet9/go-microservices-demo/common v0.0.0
-	github.com/sergicanet9/scv-go-tools/v4 v4.1.0
+	github.com/sergicanet9/scv-go-tools/v4 v4.1.2
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/http-swagger v1.3.4
 	github.com/swaggo/swag v1.16.6
