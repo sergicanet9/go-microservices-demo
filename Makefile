@@ -6,7 +6,7 @@ up:
 	rm -f mongo.keyfile
 	openssl rand -base64 24 > mongo.keyfile
 	chmod 400 mongo.keyfile
-	docker-compose up -d --build
+	docker-compose -f docker-compose.yml up -d --build
 	@echo ""
 	@echo "📋 Health Service"
 	@echo "    👉 Swagger UI:	http://localhost:${NGINX_HOST_HTTP_PORT}/health-api/v1/swagger/index.html"
