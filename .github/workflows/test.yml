@@ -17,13 +17,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
-      - uses: docker/setup-compose-action@v1
       - name: Start services
         run: make up
-      - name: Run e2e tests
-        run: make test-e2e
+
       - name: Wait for services to be ready
         run: sleep 10
+
+      - name: Run e2e tests
+        run: make test-e2e
+
       - name: Stop services
         if: always()
         run: make down
