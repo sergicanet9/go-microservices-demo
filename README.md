@@ -10,14 +10,6 @@ A lightweight **Go microservices** demo showcasing gRPC and HTTP communication, 
 | MongoDB             | Database        | Docker Container | Provides two different MongoDB databases to store users and tasks.                                                                                                     |
 | Nginx               | API Gateway    | Docker Container | Acts as an entrypoint for the distributed system, routing the HTTP traffic to the internal APIs.                                                                       |
 
-## ⚙️ Other Components
-| Component     | Role        | Integration        | Description                                                                                                                                             |
-| ------------- | ----------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| common        | Shared code | Internal Go Module | HTTP and gRPC clients for inter-service communication.                                                                                                  |
-| e2e tests     | Testing     | Internal Go Module | End-to-end tests validating interactions across the system components.                                                                                  |
-| scv-go-tools  | Toolkit     | External Go Module | Toolkit for building REST and gRPC APIs. Integrated via external Go module from [scv-go-tools](https://github.com/sergicanet9/scv-go-tools).            |
-| mongo-express | Utility     | Docker Container   | Web interface for MongoDB.                                                                                                                              |
-
 ## 📈 Architecture Diagram
 ```mermaid
 %%{init: {'theme': 'neutral'}}%%
@@ -61,6 +53,14 @@ graph TD
     UM -->|MongoDB| MDB-UM
     TM -->|MongoDB| MDB-TM
 ```
+
+## ⚙️ Other Components
+| Component     | Role        | Integration        | Description                                                                                                                                             |
+| ------------- | ----------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| common        | Shared code | Internal Go Module | HTTP and gRPC clients for inter-service communication.                                                                                                  |
+| e2e tests     | Testing     | Internal Go Module | End-to-end tests validating interactions across the system components.                                                                                  |
+| scv-go-tools  | Toolkit     | External Go Module | Toolkit for building REST and gRPC APIs. Integrated via external Go module from [scv-go-tools](https://github.com/sergicanet9/scv-go-tools).            |
+| mongo-express | Utility     | Docker Container   | Web interface for MongoDB.                                                                                                                              |
 
 ## 🏁 Getting Started
 ### Run it with Docker
