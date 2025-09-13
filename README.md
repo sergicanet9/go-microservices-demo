@@ -60,7 +60,7 @@ graph TD
 | Component     | Role        | Integration        | Description                                                                                                                                             |
 | ------------- | ----------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | common        | Shared code | Internal Go Module | HTTP and gRPC clients for inter-service communication.                                                                                                  |
-| e2e tests     | Testing     | Internal Go Module | End-to-end tests validating interactions across the system components.                                                                                  |
+| test/e2e      | Testing     | Internal Go Module | End-to-end tests validating interactions across the system components.                                                                                  |
 | scv-go-tools  | Toolkit     | External Go Module | Toolkit for building REST and gRPC APIs. Integrated via external Go module from [scv-go-tools](https://github.com/sergicanet9/scv-go-tools).            |
 | mongo-express | Utility     | Docker Container   | Web interface for MongoDB.                                                                                                                              |
 
