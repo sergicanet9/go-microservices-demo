@@ -105,7 +105,7 @@ These endpoints require a valid JWT issued by User Management API, formatted as 
 | DELETE `/task-manager-api/v1/tasks/{id}` | Deletes a task for the authenticated user.     |
 
 ### user-management-api
-Endpoints described in [go-hexagonal-api Endpoints](https://github.com/sergicanet9/go-hexagonal-api?tab=readme-ov-file#-api-endpoints).
+Endpoints described in [go-hexagonal-api Endpoints](https://github.com/sergicanet9/go-hexagonal-api?tab=readme-ov-file#-api-endpoints), prefixed with `/user-management-api`. 
 
 ## ✅ Testing
 ### Run all unit tests
