@@ -4,20 +4,22 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-const (
-	healthAPIAddr         = "http://localhost:82/health-api/v1"
-	taskManagerAPIAddr    = "http://localhost:82/task-manager-api/v1"
-	userManagementAPIAddr = "http://localhost:82/user-management-api/v1"
+var (
+	healthAPIAddr         string
+	taskManagerAPIAddr    string
+	userManagementAPIAddr string
 )
-
 var (
 	userEmail string
 	userID    string
@@ -25,6 +27,20 @@ var (
 	taskID    string
 	client    = &http.Client{Timeout: 6 * time.Second}
 )
+
+func TestMain(m *testing.M) {
+	if err := godotenv.Load("../../.env"); err != nil {
+		log.Fatalf("No .env file found: %v", err)
+		os.Exit(1)
+	}
+
+	healthAPIAddr = fmt.Sprintf("http://localhost:%s/health-api/v1", os.Getenv("NGINX_HOST_HTTP_PORT"))
+	taskManagerAPIAddr = fmt.Sprintf("http://localhost:%s/task-manager-api/v1", os.Getenv("NGINX_HOST_HTTP_PORT"))
+	userManagementAPIAddr = fmt.Sprintf("http://localhost:%s/user-management-api/v1", os.Getenv("NGINX_HOST_HTTP_PORT"))
+
+	code := m.Run()
+	os.Exit(code)
+}
 
 // TestE2EWorkflow runs the entire end-to-end flow across health-api, task-manager-api and user-management-api.
 func TestE2EWorkflow(t *testing.T) {
