@@ -59,13 +59,17 @@ func TestE2EWorkflow(t *testing.T) {
 }
 
 func testHealthCheck(t *testing.T) {
+	// Act
 	resp, err := client.Get(healthAPIAddr + "/health")
+
+	// Assert
 	assert.Nil(t, err)
 	require.NotNil(t, resp)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
 func testCreateUser(t *testing.T) {
+	// Arrange
 	userEmail = fmt.Sprintf("e2e-test-%d@test.com", time.Now().UnixNano())
 
 	reqBody := map[string]interface{}{
@@ -75,7 +79,10 @@ func testCreateUser(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
+	// Act
 	resp, err := client.Post(userManagementAPIAddr+"/users", "application/json", bytes.NewReader(body))
+
+	// Assert
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
@@ -86,13 +93,17 @@ func testCreateUser(t *testing.T) {
 }
 
 func testLoginUser(t *testing.T) {
+	// Arrange
 	reqBody := map[string]interface{}{
 		"email":    userEmail,
 		"password": "e2e-password",
 	}
 	body, _ := json.Marshal(reqBody)
 
+	// Act
 	resp, err := client.Post(userManagementAPIAddr+"/users/login", "application/json", bytes.NewReader(body))
+
+	// Assert
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
@@ -103,10 +114,14 @@ func testLoginUser(t *testing.T) {
 }
 
 func testGetUserByID(t *testing.T) {
+	// Arrange
 	req, _ := http.NewRequest("GET", fmt.Sprintf("%s/users/%s", userManagementAPIAddr, userID), nil)
 	req.Header.Set("Authorization", "Bearer "+userToken)
 
+	// Act
 	resp, err := client.Do(req)
+
+	// Assert
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
@@ -116,6 +131,7 @@ func testGetUserByID(t *testing.T) {
 }
 
 func testCreateTask(t *testing.T) {
+	// Arrange
 	reqBody := map[string]interface{}{
 		"title":       "E2E Test Task",
 		"description": "This is a task created by an E2E test.",
@@ -126,7 +142,10 @@ func testCreateTask(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+userToken)
 
+	// Act
 	resp, err := client.Do(req)
+
+	// Assert
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 
@@ -137,10 +156,14 @@ func testCreateTask(t *testing.T) {
 }
 
 func testGetTasks(t *testing.T) {
+	// Arrange
 	req, _ := http.NewRequest("GET", taskManagerAPIAddr+"/tasks", nil)
 	req.Header.Set("Authorization", "Bearer "+userToken)
 
+	// Act
 	resp, err := client.Do(req)
+
+	// Assert
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
@@ -151,19 +174,27 @@ func testGetTasks(t *testing.T) {
 }
 
 func testDeleteTask(t *testing.T) {
+	// Arrange
 	req, _ := http.NewRequest("DELETE", fmt.Sprintf("%s/tasks/%s", taskManagerAPIAddr, taskID), nil)
 	req.Header.Set("Authorization", "Bearer "+userToken)
 
+	// Act
 	resp, err := client.Do(req)
+
+	// Assert
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
 func testDeleteUser(t *testing.T) {
+	// Arrange
 	req, _ := http.NewRequest("DELETE", fmt.Sprintf("%s/users/%s", userManagementAPIAddr, userID), nil)
 	req.Header.Set("Authorization", "Bearer "+userToken)
 
+	// Act
 	resp, err := client.Do(req)
+
+	// Assert
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
