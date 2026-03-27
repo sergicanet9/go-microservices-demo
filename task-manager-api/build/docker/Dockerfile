@@ -4,11 +4,9 @@ WORKDIR /opt/go-microservices-demo/task-manager-api
 
 COPY ./common /opt/go-microservices-demo/common
 
-COPY ./task-manager-api/go.mod ./task-manager-api/go.sum ./
-RUN go mod download
 COPY ./task-manager-api .
 
-RUN go build -o bin/main cmd/main.go
+RUN go build -mod=vendor -o bin/main cmd/main.go
 
 FROM alpine:latest
 

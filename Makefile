@@ -3,6 +3,8 @@ include .env
 .PHONY: test
 
 up:
+	cd health-api && go mod vendor
+	cd task-manager-api && go mod vendor
 	rm -f mongo.keyfile
 	openssl rand -base64 24 > mongo.keyfile
 	chmod 400 mongo.keyfile

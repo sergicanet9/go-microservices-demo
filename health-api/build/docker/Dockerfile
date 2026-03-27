@@ -4,11 +4,9 @@ WORKDIR /opt/go-microservices-demo/health-api
 
 COPY ./common /opt/go-microservices-demo/common
 
-COPY ./health-api/go.mod ./health-api/go.sum ./
-RUN go mod download
 COPY ./health-api .
 
-RUN go build -o bin/main cmd/main.go
+RUN go build -mod=vendor -o bin/main cmd/main.go
 
 FROM alpine:latest
 
